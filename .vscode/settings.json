@@ -1,0 +1,31 @@
+{
+    "sqltools.connections": [
+        {
+            "server": "10.10.20.103",
+            "port": 9042,
+            "previewLimit": 50,
+            "driver": "Scylla",
+            "name": "getpay-merchant",
+            "username": "finpos_dev",
+            "password": "test123"
+        },
+        {
+            "server": "localhost",
+            "port": 9042,
+            "previewLimit": 50,
+            "driver": "Cassandra",
+            "name": "local",
+            "password": "root",
+            "username": "root"
+        },
+        {
+            "server": "103.90.84.168",
+            "port": 9042,
+            "previewLimit": 50,
+            "driver": "Scylla",
+            "name": "getpay new",
+            "username": "cassandra",
+            "password": "#SLGC7u!"
+        }
+    ]
+}

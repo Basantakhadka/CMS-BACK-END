@@ -1,0 +1,27 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  link(rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap')
+div(style='padding: 2rem;')
+  div(style='text-align: center; padding: 2rem;')
+    img(style='width: 120px;' src=institutionLargeLogo alt='Member')
+  div(style='padding: 2rem;')
+    h3 Dear #{userName},
+    div(style='margin-top: 2rem; margin-bottom: 1rem;')
+      p
+        | Your verification code for login is 
+        b #{otpValue}
+        | .
+        br
+        br
+        | Please use this code to validate your login.
+        br
+        br
+        i Note: kindly disregard this email if you have already received same email.
+    p Sincerely,
+    img(style='width: 80px;' src=institutionLargeLogo alt='MEMBER')
+  hr
+  //- div(style='float:right; display: flex; gap: 10px; justify-content: end; align-items: center;')
+  //-   p(style='font-size: 17px;') Powered By:&nbsp;&nbsp;
+  //-   img(style='margin-top: 1.2rem;' width='90px' height='22px' src='cid:logo' alt='getpay')

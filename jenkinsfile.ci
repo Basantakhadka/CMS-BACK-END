@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+    environment {
+        ImageName = "${REGISTRY_REPO}"
+    }
+    stages {
+        stage('Cloning Git') {
+            steps {
+                echo "INFO: Switching to branch ${env.BRANCH_NAME} and commit ${env.GIT_COMMIT}"
+                checkout scm
+                sh "git reset --hard ${env.GIT_COMMIT}"
+                echo "INFO: Project files checked out from branch ${env.BRANCH_NAME} and commit ${env.GIT_COMMIT}"
+            }
+        }
+        stage('Building image') {
+            steps {
+                script {
+                    echo 'Building Docker image...'
+
+                    // Determine registry and Dockerfile based on PROJECT_CODE
+                    def dockerfile
+                    if (env.PROJECT_CODE == 'IP') {
+                        dockerfile = "Dockerfile_instantpay"
+                    } else {
+                        dockerfile = "Dockerfile"
+                    }
+
+                    def shortCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                    env["ImageTag"] = "${ImageName}:${ENVIRONMENT}-${shortCommit}"
+                    env["ImageFull"] = "${REGISTRY}/${Product}/${ImageTag}"
+                    sh "docker build --no-cache  -t ${ImageFull} -f ${dockerfile} ."
+                    echo 'Docker image build complete.'
+                    echo 'INFO: Docker image build complete.'
+                }
+            }
+        }
+
+        stage('Push Image to Registry') {
+            steps {
+                script {
+                    echo 'Pushing Docker image to Registry...'
+                    def shortCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                    sh "docker push ${ImageFull}"
+                    echo 'Image pushed to Registry.'
+                }
+            }
+        }
+    stage('Remove unused docker images') {
+      steps{
+        script{
+			try {
+                sh "docker image prune --filter until=30m -a -f"
+				} catch (err) {
+                echo err.getMessage()
+			}
+		}
+      }
+    }
+    stage('Conditional Post Job') {
+            when {
+                expression { env.PROJECT_ENV != 'PROD' }
+            }
+            steps {
+                script {
+                    echo 'INFO: Running post job...'
+                    build job: POST_JOB, parameters: [
+                        string(name: 'PROJECT', value: "${PROJECT}"),
+                        string(name: 'IMAGE_TAG', value: "${ImageTag}"),
+                        string(name: 'VALUES_FILE', value: "${VALUES_FILE}")
+                    ]
+                }
+            }
+        }
+    }
+ }

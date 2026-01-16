@@ -1,0 +1,12 @@
+# ignore .git and .cache folders
+.git
+.cache
+
+.env
+*.env
+
+node_modules
+config
+logs
+k8s
+test

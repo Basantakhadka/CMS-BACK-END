@@ -1,0 +1,309 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bank-backend
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: bank-backend
+    spec:
+      containers:
+        - name: bank-backend
+          image: reg.citytech.global/getpay/merchant-bank-backend:${BUILD_NUMBER}
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+            - containerPort: 443
+              protocol: TCP
+          env:
+            - name: SECRET_JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: SECRET_JWT_KEY
+            - name: DB_CLIENT
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: DB_CLIENT
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: DB_HOST
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: DB_NAME
+            - name: DB_DATACENTER
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: DB_DATACENTER
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: DB_PORT
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: DB_PASSWORD
+            - name: DEPLOYMENT_NAMESPACE
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: DEPLOYMENT_NAMESPACE
+            - name: SPARROW_SMS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: SPARROW_SMS_TOKEN
+            - name: SPARROW_SMS_FROM
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: SPARROW_SMS_FROM
+            - name: CAPTCHA_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: CAPTCHA_SECRET_KEY
+            - name: JWT_EXPIRES_IN
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: JWT_EXPIRES_IN
+            - name: KAFKA_BROKER_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: KAFKA_BROKER_USERNAME
+            - name: KAFKA_BROKER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: KAFKA_BROKER_PASSWORD
+            - name: KAFKA_BROKER
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: KAFKA_BROKER
+            - name: JWT_ISSUER
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: JWT_ISSUER
+            - name: MINIO_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: MINIO_ENDPOINT
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: MINIO_ACCESS_KEY
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: MINIO_SECRET_KEY
+            - name: MINIO_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: MINIO_BUCKET_NAME
+            - name: MAILER_FROM_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: MAILER_FROM_EMAIL
+            - name: EMAIL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: EMAIL_HOST
+            - name: EMAIL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: EMAIL_PORT
+            - name: USER_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: USER_EMAIL
+            - name: USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: USER_PASSWORD  
+            - name: MERCHANT_PORTAL_LINK
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: MERCHANT_PORTAL_LINK   
+            - name: LOGO
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: LOGO
+            - name: INSTITUTION_PORTAL_LINK
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: INSTITUTION_PORTAL_LINK    
+            - name: DB_GROUP_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: DB_GROUP_NAME
+ 
+            - name: PRESTO_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: PRESTO_HOST
+            - name: PRESTO_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: PRESTO_PORT    
+            - name: PRESTO_USER
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: PRESTO_USER
+            - name: PRESTO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: PRESTO_PASSWORD
+            - name: PRESTO_BASIC_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: PRESTO_BASIC_AUTH
+            - name: PRESTO_SCHEMA
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: PRESTO_SCHEMA
+            - name: PRESTO_CATALOG
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: PRESTO_CATALOG
+            - name: DB_SHARED_KEYSPACE
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: DB_SHARED_KEYSPACE 
+            - name: OPERATOR_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: OPERATOR_API_URL
+            - name: SAVED_GENERATED_QR_PDF_PATH
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: SAVED_GENERATED_QR_PDF_PATH
+            - name: KAFKA_INITIALIZE_RETRY
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: KAFKA_INITIALIZE_RETRY
+            - name: KAFKA_HEARTBEAT_CHECK_INTERVAL
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: KAFKA_HEARTBEAT_CHECK_INTERVAL
+            - name: ENABLE_OTP_NOTIFICATION
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: ENABLE_OTP_NOTIFICATION
+            - name: MEMBER_IMAGES
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: MEMBER_IMAGES
+            - name: MMS_SERVICE_SECRETS
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: MMS_SERVICE_SECRETS
+            - name: GMID_GENERATION_CODE
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: GMID_GENERATION_CODE
+            - name: BACKEND_TZ
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: BACKEND_TZ
+            - name: TEMP_FOLDER_PATH
+              value: '/usr/src/app/temp' 
+            - name: EXPORT_REPORT_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: getpay-secret
+                  key: EXPORT_REPORT_CONFIG
+          resources:
+            limits:
+              cpu: 800m
+              memory: 1200Mi
+            requests:
+              cpu: 400m
+              memory: 600Mi
+          livenessProbe:
+            httpGet:
+              path: /v1/ping
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 45
+            timeoutSeconds: 45
+            periodSeconds: 45
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /v1/ping
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 45
+            timeoutSeconds: 45
+            periodSeconds: 45
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

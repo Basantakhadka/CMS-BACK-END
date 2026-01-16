@@ -1,0 +1,36 @@
+FROM harbor.instantpaygateway.com/instantpay-uat/bank-backend:instantpay-55c3a0d5
+
+# Start as root for setup
+USER root
+
+# Create directories and set ownership (using UID 10001 from base)
+RUN mkdir -p /usr/src/app/merchants_generated_qr /usr/src/app/temp && \
+    chown -R 10001:10001 /usr/src/app
+
+# Install tzdata and set the timezone
+#RUN apt update && apt install tzdata -y
+#ENV TZ="Africa/Dar_es_Salaam"
+#RUN cp /usr/share/zoneinfo/Africa/Dar_es_Salaam /etc/localtime && echo "Africa/Dar_es_Salaam" > /etc/timezone
+
+# Switch to non-root user early
+USER 10001
+
+# Set working directory (consistent throughout)
+WORKDIR /usr/src/app
+
+# Temporarily set to development to install devDependencies (fixes Husky)
+ENV NODE_ENV=development
+
+# Copy package files and install
+COPY --chown=10001:10001 package*.json ./
+RUN npm ci  # Use ci for lockfile consistency; switch to npm install if preferred
+
+# Copy the rest of the app and build
+COPY --chown=10001:10001 . .
+RUN npm run build
+
+# Reset for production runtime
+ENV NODE_ENV=production
+
+EXPOSE 3000
+CMD ["npm", "run", "start:prod"]

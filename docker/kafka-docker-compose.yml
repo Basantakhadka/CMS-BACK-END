@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  # bank-portal:
+  #   build:
+  #     context: ../
+  #     dockerfile: docker-test/Dockerfile.test
+  #   container_name: bank-portal
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - kafka
+  #   environment:
+  #     KAFKA_BROKER: kafka:9092  # Use the service name "kafka" as the hostname
+  #   networks:
+  #     - docker-network
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - docker-network
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    networks:
+      - docker-network
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092  # Advertise the correct listener
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092  # Bind to all network interfaces
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+networks:
+  docker-network:
+   name: custom-docker-network

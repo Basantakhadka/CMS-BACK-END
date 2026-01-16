@@ -1,0 +1,34 @@
+html
+  head
+    style(type='text/css').
+      body {
+          font-family: Arial, sans-serif;
+      }
+  body
+    div(style='padding:1rem 2rem; font-size: 18px;')
+      p(style="margin-top: 1rem;")
+        span(style="font-weight: bold;") Dear Team,
+      p As dispute with following details has been received:
+      div(style='padding-top: 5px;')
+        span(style='font-weight: bold;') Transaction ID:&nbsp;
+        span #{txnId}
+      div(style='padding-top: 5px;')
+        span(style='font-weight: bold;') Dispute Amount:&nbsp;
+        span NPR #{disputeAmount}
+      div(style='padding-top: 5px;')
+        span(style='font-weight: bold;') Transaction Type:&nbsp;
+        span #{transactionType}
+      div(style='padding-top: 5px;')
+        span(style='font-weight: bold;') Transaction Date:&nbsp;
+        span #{txnDate}
+      div(style='padding-top: 5px;')
+        span(style='font-weight: bold;') Dispute Category:&nbsp;
+        span #{disputeCategory}
+      div(style='padding-top: 5px;')
+        span(style='font-weight: bold;') Remarks:&nbsp;
+        span #{remarks}
+      div(style='margin-top: 2rem;')
+        p Please, log into operator portal to take action. 
+      div(style='margin-top: 20px; margin-bottom: 2rem;')
+        span Regards,
+        p(style="font-weight:bold;") #{memberName}

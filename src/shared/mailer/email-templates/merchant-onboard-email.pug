@@ -1,0 +1,25 @@
+doctype html
+html
+  head
+    meta(charset='UTF-8')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap')
+  body
+    div(style='padding: 0 5rem;')
+      h2 Dear #{name},
+      div(style='font-size: 15px;')
+        p
+          | Welcome . Your merchant account has been created by #{institutionName}.
+          br
+          | Please, click on below activation link to activate your account as soon as possible.
+      div(style='margin-bottom: 1.2rem; font-size: 15px;')
+        p(style='margin-right:20px')
+          | Activation Link :
+          a(href=portalLink) Click here
+      div(style='margin-top: 10px; margin-bottom: 5px; font-size: 16px; font-weight: 700;') Regards,
+      div(style='margin-bottom: 10px; font-size: 16px; font-weight: 700;') #{institutionName}
+      
+      if showPoweredByLogo
+        hr
+        div(style='float: right; display: flex; gap: 10px; justify-content: end; align-items: center;')
+          p(style='font-size: 17px;') Powered By:&nbsp;&nbsp;
+          img(style='margin-top: 1.2rem;', width='90px', height='22px', src='cid:getpay', alt='getpay logo')
