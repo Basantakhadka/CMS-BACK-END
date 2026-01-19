@@ -1,7 +1,8 @@
-import { DatasourceService } from "CMS-BACK-END/src/core/db/datasource.service";
-import { Page } from "CMS-BACK-END/src/core/repository/search/page";
-import { PageableInfo } from "CMS-BACK-END/src/core/repository/search/pageable.info";
-import { SearchMeta } from "CMS-BACK-END/src/core/repository/search/search.meta";
+
+import { DatasourceService } from "../../../../core/db/datasource.service";
+import { Page } from "../../../../core/repository/search/page";
+import { PageableInfo } from "../../../../core/repository/search/pageable.info";
+import { SearchMeta } from "../../../../core/repository/search/search.meta";
 import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { GeneralPolicy } from "../../entities/general-policy.entity";
