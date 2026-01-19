@@ -1,5 +1,5 @@
-import { PermissionInterceptor } from "CMS-BACK-END/src/core/interceptors/permission.interceptor";
-import { RequestContext } from "CMS-BACK-END/src/core/middleware/request_context";
+import { PermissionInterceptor } from "../../core/interceptors/permission.interceptor";
+import { RequestContext } from "../../core/middleware/request_context";
 import { Body, Controller, Post, UseInterceptors, Get } from "@nestjs/common";
 import { AsyncLocalStorage } from "async_hooks";
 import { ChangePasswordDto } from "./dto/change-password.dto";
@@ -11,8 +11,8 @@ import { UserLoginUsecase } from "./usecases/user-login.usecase";
 import { UserLogoutUsecaseRequest } from "./usecases/request/user-logout.usecase.request";
 import { UserLogoutUsecase } from "./usecases/user-logout.usecase";
 import { ApiBearerAuth, ApiHeader, ApiTags } from "@nestjs/swagger";
-import { OtpDto } from "CMS-BACK-END/src/core/otp/otp.dto";
-import { VerifyOtpDto } from "CMS-BACK-END/src/core/otp/verify-otp.dto";
+import { OtpDto } from "../../core/otp/otp.dto";
+import { VerifyOtpDto } from "../../core/otp/verify-otp.dto";
 import { SendLoginOtpUsecaseRequest } from "./usecases/request/send-login-otp.usecase.request";
 import { VerifyLoginOtpUsecaseRequest } from "./usecases/request/verify-login-otp.usecase.request";
 import { SendLoginOtpUsecase } from "./usecases/send-login-otp.usecase";
@@ -79,23 +79,23 @@ export class AuthController {
     return response;
   }
 
-	@Post("send-otp")
-	async sendOtp(@Body() body: OtpDto) {
-		const request = new SendLoginOtpUsecaseRequest(body);
-		const response = await this.sendLoginOtpUsecase.execute(
-			request,
-			this.als.getStore()
-		);
-		return response;
-	}
+	// 	@Post("send-otp")
+	// 	async sendOtp(@Body() body: OtpDto) {
+	// 		const request = new SendLoginOtpUsecaseRequest(body);
+	// 		const response = await this.sendLoginOtpUsecase.execute(
+	// 			request,
+	// 			this.als.getStore()
+	// 		);
+	// 		return response;
+	// 	}
 
-	@Post("verify-otp")
-	async verifyOtp(@Body() body: VerifyOtpDto) {
-		const request = new VerifyLoginOtpUsecaseRequest(body);
-		const response = await this.verifyLoginOtpUsecase.execute(
-			request,
-			this.als.getStore()
-		);
-		return response;
-	}
+	// 	@Post("verify-otp")
+	// 	async verifyOtp(@Body() body: VerifyOtpDto) {
+	// 		const request = new VerifyLoginOtpUsecaseRequest(body);
+	// 		const response = await this.verifyLoginOtpUsecase.execute(
+	// 			request,
+	// 			this.als.getStore()
+	// 		);
+	// 		return response;
+	// 	}
 }

@@ -1,24 +1,30 @@
-import { JwtStrategy } from "CMS-BACK-END/src/core/auth/JwtStrategy";
-import { UserPoolService } from "CMS-BACK-END/src/core/cache/user-pool.service";
-import { comparePassword } from "CMS-BACK-END/src/core/hashing/hashing";
-import { RequestContext } from "CMS-BACK-END/src/core/middleware/request_context";
-import { Usecase } from "CMS-BACK-END/src/core/usecase/usecase";
-import { Result } from "@app/feature/common/result";
-import { MFASTATUS } from "@app/feature/constants";
-import { PasswordPolicy } from "CMS-BACK-END/src/feature/identity-access/dtos/create-general-policy.dto";
-import { UserCredential } from "CMS-BACK-END/src/feature/identity-access/entities/user-credential.entity";
-import { User } from "CMS-BACK-END/src/feature/identity-access/entities/user.entity";
-import { GeneralPolicyDbRepository } from "CMS-BACK-END/src/feature/identity-access/repositories/db/general-policy.repository";
-import { UserCredentialDbRepository } from "CMS-BACK-END/src/feature/identity-access/repositories/db/user-credential.repository";
-import { UserDbRepository } from "CMS-BACK-END/src/feature/identity-access/repositories/db/user.repository";
-import { GeneralPolicyRepository } from "CMS-BACK-END/src/feature/identity-access/repositories/general-policy.repository";
-import { UserCredentialRepository } from "CMS-BACK-END/src/feature/identity-access/repositories/user-credential.repository";
-import { UserRepository } from "CMS-BACK-END/src/feature/identity-access/repositories/user.repository";
-import { SystemConfigurationDbRepository } from "@app/feature/system-configuration/repositories/db/system-configuration.repository";
-import { SystemConfigurationRepository } from "@app/feature/system-configuration/repositories/system-configuration.repository";
-import { WorkflowGroupDbRepository } from "@app/feature/workflow/repository/db/workflow-group.repository";
-import { WorkflowGroupRepository } from "@app/feature/workflow/repository/workflow-group.repository";
-import { IdGenerator } from "CMS-BACK-END/src/shared/id-generator";
+
+import { JwtStrategy } from "../../../core/auth/JwtStrategy";
+import { UserPoolService } from "../../../core/cache/user-pool.service"
+
+import { comparePassword } from "../../../core/hashing/hashing";
+import { RequestContext } from "../../../core/middleware/request_context";
+import { Usecase } from "../../../core/usecase/usecase";
+import { Result } from "../../../feature/common/result";
+
+
+// Update the import path below to the correct location of constants.ts
+import { MFASTATUS } from "../../constants";
+import { PasswordPolicy } from "../../identity-access/dtos/create-general-policy.dto";
+import { UserCredential } from "../../identity-access/entities/user-credential.entity";
+import { User } from "../../identity-access/entities/user.entity";
+import { GeneralPolicyDbRepository } from "../../identity-access/repositories/db/general-policy.repository";
+import { UserCredentialDbRepository } from "../../identity-access/repositories/db/user-credential.repository";
+import { UserDbRepository } from "../../identity-access/repositories/db/user.repository";
+import { GeneralPolicyRepository } from "../../identity-access/repositories/general-policy.repository";
+import { UserCredentialRepository } from "../../identity-access/repositories/user-credential.repository";
+import { UserRepository } from "../../identity-access/repositories/user.repository";
+// import { SystemConfigurationDbRepository } from "../../../feature/system-configuration/repositories/db/system-configuration.repository";
+// import { SystemConfigurationDbRepository } from "../../../feature/system-configuration/repositories/db/system-configuration.repository";
+// import { SystemConfigurationRepository } from "@app/feature/system-configuration/repositories/system-configuration.repository";
+// import { WorkflowGroupDbRepository } from "@app/feature/workflow/repository/db/workflow-group.repository";
+// import { WorkflowGroupRepository } from "@app/feature/workflow/repository/workflow-group.repository";
+import { IdGenerator } from "../../../shared/id-generator";
 import {
 	BadRequestException,
 	ForbiddenException,
@@ -29,15 +35,15 @@ import { UserLoginService } from "../services/user-login.service";
 import { UserLoginUsecaseRequest } from "./request/user-login.usecase.request";
 import { UserLoginUsecaseResponse } from "./response/user-login.usecase.response";
 import { JwtSignOptions } from "@nestjs/jwt";
-import { IMailOptions } from "CMS-BACK-END/src/shared/mailer/mailer-interfaces/interfaces";
-import { SystemConfigurationEntity } from "@app/feature/system-configuration/entities/system-configuration.entity";
-import { EmailService } from "CMS-BACK-END/src/core/notification/notification.service";
-import { GeneralPolicy } from "CMS-BACK-END/src/feature/identity-access/entities/general-policy.entity";
+// import { IMailOptions } from "CMS-BACK-END/src/shared/mailer/mailer-interfaces/interfaces";
+// import { SystemConfigurationEntity } from "@app/feature/system-configuration/entities/system-configuration.entity";
+// import { EmailService } from "CMS-BACK-END/src/core/notification/notification.service";
+import { GeneralPolicy } from "src/feature/identity-access/entities/general-policy.entity";
 
 export class UserLoginUsecase
 	implements Usecase<UserLoginUsecaseRequest, UserLoginUsecaseResponse>
 {
-	private systemConfiguration: SystemConfigurationEntity;
+	// private systemConfiguration: SystemConfigurationEntity;
 
 	private userData: User;
 
@@ -48,14 +54,14 @@ export class UserLoginUsecase
 		@Inject(GeneralPolicyDbRepository)
 		private readonly generalPolicyRepository: GeneralPolicyRepository,
 		private readonly jwtStrategy: JwtStrategy,
-		@Inject(SystemConfigurationDbRepository)
-		private readonly systemConfigurationRepository: SystemConfigurationRepository,
-		@Inject(WorkflowGroupDbRepository)
-		public workflowDetailsRepository: WorkflowGroupRepository,
+		// @Inject(SystemConfigurationDbRepository)
+		// private readonly systemConfigurationRepository: SystemConfigurationRepository,
+		// @Inject(WorkflowGroupDbRepository)
+		// public workflowDetailsRepository: WorkflowGroupRepository,
 		@Inject(UserPoolService)
 		private userLoginCacheService: UserPoolService,
-		@Inject(EmailService)
-		private readonly emailService: EmailService,
+		// @Inject(EmailService)
+		// private readonly emailService: EmailService,
 		private readonly userLoginService: UserLoginService
 	) {}
 
@@ -78,9 +84,9 @@ export class UserLoginUsecase
 		}
 		this.userData = user;
 		if (!user.active) {
-			this.sendFailedLoginAttemptEmail(
-				"Sorry! User is Disabled. Unable to Login. Please contact your Administration."
-			);
+			// this.sendFailedLoginAttemptEmail(
+			// 	"Sorry! User is Disabled. Unable to Login. Please contact your Administration."
+			// );
 			Result.createErrorWithMessage(
 				new BadRequestException(
 					"Sorry! User is Disabled. Unable to Login. Please contact your Administration."
@@ -91,9 +97,9 @@ export class UserLoginUsecase
 		const usersRolesInUsersByRole =
 			await this.userRepository.findSavedUsersRoles(user.id);
 		if (usersRolesInUsersByRole.length == 0) {
-			this.sendFailedLoginAttemptEmail(
-				"Sorry! Unable to Login. No role assigned."
-			);
+			// this.sendFailedLoginAttemptEmail(
+			// 	"Sorry! Unable to Login. No role assigned."
+			// );
 			Result.createErrorWithMessage(
 				new BadRequestException("Sorry! Unable to Login. No role assigned."),
 				"Login Failed"
@@ -103,9 +109,9 @@ export class UserLoginUsecase
 			user.id
 		);
 		if (!userCredential) {
-			this.sendFailedLoginAttemptEmail(
-				"Sorry! Unable to Login. No credentials found."
-			);
+			// this.sendFailedLoginAttemptEmail(
+			// 	"Sorry! Unable to Login. No credentials found."
+			// );
 			Result.createErrorWithMessage(
 				new BadRequestException("Incorrect username or password"),
 				"Login Failed"
@@ -122,9 +128,9 @@ export class UserLoginUsecase
 			const expiryTime = userCredential.expiryTime;
 			const currentTimestamp = Date.now();
 			if (expiryTime && +currentTimestamp > +expiryTime) {
-				this.sendFailedLoginAttemptEmail(
-					"Your password has expired. Please set new password."
-				);
+				// this.sendFailedLoginAttemptEmail(
+				// 	"Your password has expired. Please set new password."
+				// );
 				Result.createErrorWithMessage(
 					new ForbiddenException(
 						"Your password has expired. Please set new password."
@@ -143,9 +149,9 @@ export class UserLoginUsecase
 			userCredential
 		);
 		if (!canAccess) {
-			this.sendFailedLoginAttemptEmail(
-				"our account is locked. Please contact admin suppor"
-			);
+			// this.sendFailedLoginAttemptEmail(
+			// 	"our account is locked. Please contact admin suppor"
+			// );
 
 			Result.createError(
 				new BadRequestException(
@@ -206,9 +212,9 @@ export class UserLoginUsecase
 			user.id
 		);
 		if (updatedUserCredential.blocked) {
-			this.sendFailedLoginAttemptEmail(
-				"our account is locked. Please contact admin suppor"
-			);
+			// this.sendFailedLoginAttemptEmail(
+			// 	"our account is locked. Please contact admin suppor"
+			// );
 
 			Result.createError(
 				new BadRequestException(
@@ -233,16 +239,16 @@ export class UserLoginUsecase
 			const attemptsLeft =
 				userLoginAttemptsLimit - unsuccessfulLoginAttempts + 1;
 			const message = `Incorrect username or password. You have ${attemptsLeft} attempts left.`;
-			this.sendFailedLoginAttemptEmail(
-				`Incorrect username or password. You have ${attemptsLeft} attempts left.`
-			);
+			// this.sendFailedLoginAttemptEmail(
+			// 	`Incorrect username or password. You have ${attemptsLeft} attempts left.`
+			// );
 
 			Result.createErrorWithMessage(
 				new BadRequestException(message),
 				"Login Failed"
 			);
 		}
-		this.sendFailedLoginAttemptEmail(`Incorrect username or password`);
+		// this.sendFailedLoginAttemptEmail(`Incorrect username or password`);
 
 		Result.createErrorWithMessage(
 			new BadRequestException("Incorrect username or password"),
@@ -287,9 +293,9 @@ export class UserLoginUsecase
 		request: UserLoginUsecaseRequest,
 		requestContext?: RequestContext
 	): Promise<Result<UserLoginUsecaseResponse>> {
-		const systemConfigurations =
-			await this.systemConfigurationRepository.findAll();
-		this.systemConfiguration = systemConfigurations[0];
+		// const systemConfigurations =
+		// 	await this.systemConfigurationRepository.findAll();
+		// this.systemConfiguration = systemConfigurations[0];
 		const { user, userCredential } = await this.validateUser(request);
 
 		if (
@@ -319,19 +325,19 @@ export class UserLoginUsecase
 		const sessionId = IdGenerator.generateId("v4");
 
 		if (isMFAEnabled || enforcePasswordChange) {
-			if (!systemConfigurations?.length) {
-				Result.createError(
-					new NotFoundException("Invalid Credentials")
-				);
-			}
-			const configKey =
-				systemConfigurations[0]?.configKey &&
-				JSON.parse(systemConfigurations[0].configKey);
-			if (!configKey) {
-				Result.createError(
-					new NotFoundException("Config key not found in system configuration")
-				);
-			}
+			// if (!systemConfigurations?.length) {
+			// 	Result.createError(
+			// 		new NotFoundException("Invalid Credentials")
+			// 	);
+			// }
+			// const configKey =
+			// 	systemConfigurations[0]?.configKey &&
+			// 	JSON.parse(systemConfigurations[0].configKey);
+			// if (!configKey) {
+			// 	Result.createError(
+			// 		new NotFoundException("Config key not found in system configuration")
+			// 	);
+			// }
 			const payload = {
 				userId: user.userId,
 				fullName: user.userName,
@@ -344,7 +350,7 @@ export class UserLoginUsecase
 					password?.toUpperCase() !== "MIGRATED"
 						? MFASTATUS.PENDING
 						: MFASTATUS.NOTSET,
-				institutionType: configKey.institutionType,
+				// institutionType: configKey.institutionType,
 				sessionId,
 			};
 
@@ -358,8 +364,8 @@ export class UserLoginUsecase
 			const accessToken = this.jwtStrategy.sign(payload, jwtSignOption);
 			const response = new UserLoginUsecaseResponse({
 				accessToken,
-				institutionType: configKey.institutionType,
-				institutionName: configKey?.institutionName,
+				// institutionType: configKey.institutionType,
+				// institutionName: configKey?.institutionName,
 				enforcePasswordChange,
 				MFAStatus:
 					password?.toUpperCase() !== "MIGRATED"
@@ -380,30 +386,30 @@ export class UserLoginUsecase
 		return Result.createSuccess(response);
 	}
 
-	async sendFailedLoginAttemptEmail(message: string) {
-		const passwordPolicy = await this.getPasswordPolicy();
-		if (!passwordPolicy.shouldSendEmailOnFailedLogin) {
-			return;
-		}
+	// async sendFailedLoginAttemptEmail(message: string) {
+	// 	const passwordPolicy = await this.getPasswordPolicy();
+	// 	if (!passwordPolicy.shouldSendEmailOnFailedLogin) {
+	// 		return;
+	// 	}
 
-		const configKey = JSON.parse(this.systemConfiguration?.configKey);
-		const operatorLargeLogo = configKey?.institutionLargeLogo;
+	// 	const configKey = JSON.parse(this.systemConfiguration?.configKey);
+	// 	const operatorLargeLogo = configKey?.institutionLargeLogo;
 
-		const replaceValues = {
-			name: this.userData.userName,
-			message: message,
-			institutionLargeLogo: operatorLargeLogo,
-		};
+	// 	const replaceValues = {
+	// 		name: this.userData.userName,
+	// 		message: message,
+	// 		institutionLargeLogo: operatorLargeLogo,
+	// 	};
 
-		const mailOptions: IMailOptions = {
-			subject: `Login Attempt Failed`,
-			to: this.userData.userId,
-			templateName: "failed-login-attempt",
-			replace: replaceValues,
-		};
+	// 	const mailOptions: IMailOptions = {
+	// 		subject: `Login Attempt Failed`,
+	// 		to: this.userData.userId,
+	// 		templateName: "failed-login-attempt",
+	// 		replace: replaceValues,
+	// 	};
 
-		return this.emailService.sendEmail({
-			emailProperties: mailOptions,
-		});
-	}
+	// 	return this.emailService.sendEmail({
+	// 		emailProperties: mailOptions,
+	// 	});
+	// }
 }

@@ -1,4 +1,5 @@
-import { BaseRepository } from "CMS-BACK-END/src/core/repository/base.repository";
+
+import { BaseRepository } from "../../../core/repository/base.repository"
 import { UserCredential } from "../entities/user-credential.entity";
 
 export interface UserCredentialRepository

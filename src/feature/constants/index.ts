@@ -1,0 +1,14 @@
+export const otpConstantParameters = {
+	OTP_MAX_SENT_COUNT: 5,
+	OTP_FAILURE_TIME: 5,
+	OTP_MAX_RETRY_COUNT: 5,
+	OTP_FAILURE_RESET_TIME: 1440, // 1 day
+};
+
+export enum MFASTATUS {
+	PENDING = "PENDING",
+	ACTIVE = "ACTIVE",
+	INACTIVE = "INACTIVE",
+	VERIFIED = "VERIFIED",
+	NOTSET = "NOTSET",
+}

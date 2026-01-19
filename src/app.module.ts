@@ -1,5 +1,5 @@
-import { AppController } from "CMS-BACK-END/src/app.controller";
-import { CoreModule } from "CMS-BACK-END/src/core/module";
+import { AppController } from "./app.controller";
+import { CoreModule } from "./core/module";
 import { MiddlewareConsumer, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { JwtStrategy } from "./core/auth/JwtStrategy";
