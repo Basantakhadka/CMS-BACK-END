@@ -1,94 +1,51 @@
-# Contract Management System - Backend
+A skeleton/boilerplate/starter project for quickly building RESTful APIs using Node.js, NestsJS, Express, and Postgres.
 
-A robust and scalable **Contract Management System (CMS)** backend built with NestJS, TypeScript, and PostgreSQL. This system provides comprehensive contract lifecycle management with authentication, authorization, and advanced querying capabilities.
+By running one command, you will get a production-ready Node.js app installed and configured on your machine. There are many built-in features in the skeleton, including authentication using JWT, request validation, unit and integration tests, continuous integration, docker support, API documentation, pagination, etc. To learn more about its features, check out the following list.
 
 ## Description
 
-Built on the [Nest](https://github.com/nestjs/nest) framework, this backend provides:
+- [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-- **Enterprise-grade architecture** following SOLID principles
-- **Complete contract lifecycle management** - from draft to termination
-- **Advanced authentication & authorization** using JWT and passport
-- **Role-based access control** (RBAC) through Identity & Access Management
-- **RESTful API design** with comprehensive documentation
-- **Type-safe** development with TypeScript
-- **Production-ready** with Docker support and CI/CD integration
+- Nest provides a level of abstraction above these common Node.js frameworks (Express/Fastify) but also exposes their APIs directly to the developer. This allows developers the freedom to use the myriad of third-party modules which are available for the underlying platform.
 
-Nest provides a level of abstraction above common Node.js frameworks (Express/Fastify) while also exposing their APIs directly, giving developers the freedom to use the myriad of third-party modules available for the underlying platform.
+- There are superb libraries, helpers, and tools that exist for Node (and server-side JavaScript), none of them effectively solve the main problem of — Architecture.
+
+Take it for a test drive. We'd love to hear any feedback you have or if you've thought of a new feature.
 
 ## Table of Contents
 
 - [Features](#features)
-- [Contract Management Features](#contract-management-features)
-- [Getting Started](#getting-started)
+- [Getting started](#getting=started)
 - [Project Structure](#project-structure)
-- [API Documentation](#api-documentation)
 
 ## Features
 
-### Core Infrastructure
-- **Quick start** - Production-ready setup with one command
-- **Integrated ESLint, Prettier and Husky** for code quality
-- **SOLID Principles** - Clean, maintainable architecture
-- **Authentication and authorization** using [passport](http://www.passportjs.org) and JWT
-- **Identity & Access Management** - Role-based permissions and user management
-- **Request validation** using [class-validator](https://github.com/typestack/class-validator)
-- **Comprehensive logging** with [winston](https://github.com/winstonjs/winston)
-- **Testing suite** - Unit and integration tests with [Jest](https://jestjs.io)
-- **Error handling** - Centralized exception handling mechanism
-- **API documentation** with [Swagger/OpenAPI](https://docs.nestjs.com/openapi/introduction)
-- **Database migrations** with TypeORM
-- **Caching layer** with Redis integration
-- **Email notifications** with customizable templates
-- **OTP generation** for secure operations
+- **Quick start**
+- **Integrated ESLint, Prettier and Husky**
+- **Simple and Standard scaffolding**
+- **Production-Ready Skeleton**
+- **Followed SOLID Principles**
+- **Authentication and authorization**: using [passport](http://www.passportjs.org)
+- **Validation**: request data validation using [Nest JS Pipe](https://docs.nestjs.com/techniques/validation)
+- **Logging**: using [winston](https://github.com/winstonjs/winston) 
+- **Testing**: unit and integration tests using [Jest](https://jestjs.io)
+- **Error handling**: centralized error handling mechanism
+- **API documentation**: with [swagger](https://docs.nestjs.com/openapi/introduction) 
+- **Process management**: advanced production process management using [PM2](https://pm2.keymetrics.io)
+- **Dependency management**: with [npm](https://www.npmjs.com/)
+- **Environment variables**: using [dotenv](https://github.com/motdotla/dotenv) and [cross-env](https://github.com/kentcdodds/cross-env#readme)
+- **API Versioning**
+- **Security**: set security HTTP headers using [helmet](https://helmetjs.github.io)
+- **Santizing**: sanitize request data against xss and query injection
+- **CORS**: Cross-Origin Resource-Sharing enabled using [cors](https://github.com/expressjs/cors)
+- **Compression**: gzip compression with [compression](https://github.com/expressjs/compression)
+- **CI**: Continuous integration with [Travis CI](https://travis-ci.org)
+- **Docker support**
+- **Git hooks**: with [husky](https://github.com/typicode/husky) and [lint-staged](https://github.com/okonet/lint-staged)
+- **Linting**: with [ESLint](https://eslint.org) and [Prettier](https://prettier.io)
+- **Editor config**: consistent editor configuration using [EditorConfig](https://editorconfig.org)
 
-### Security & Performance
-- **Security headers** using [helmet](https://helmetjs.github.io)
-- **Data sanitization** against XSS and query injection
-- **CORS** enabled with configurable options
-- **Compression** with gzip for optimized responses
-- **Rate limiting** for API protection
-
-### Development Tools
-- **Environment management** with [dotenv](https://github.com/motdotla/dotenv)
-- **Docker support** for containerized deployment
-- **Git hooks** with [husky](https://github.com/typicode/husky) and [lint-staged](https://github.com/okonet/lint-staged)
-- **Continuous Integration** ready
-- **API Versioning** support
-
-## Contract Management Features
-
-### Contract Lifecycle
-- **Contract Types**: Service, Vendor, Employment, NDA, Partnership, and more
-- **Status Management**: 
-  - DRAFT - Initial contract creation
-  - PENDING_APPROVAL - Awaiting approval
-  - APPROVED - Contract approved
-  - ACTIVE - Currently active contract
-  - EXPIRED - Contract has ended
-  - TERMINATED - Contract terminated early
-  - REJECTED - Contract rejected
-
-### Contract Operations
-- ✅ Create and manage contracts with detailed information
-- ✅ Track contract parties, dates, values, and terms
-- ✅ Query active contracts and expiring contracts
-- ✅ Full CRUD operations with soft delete support
-- ✅ Pagination and filtering support
-- ✅ Metadata storage for extensibility
-- ✅ Audit trail with created/updated timestamps
-
-### Future Enhancements (Roadmap)
-- 📄 Document attachment management
-- ✍️ Digital signature integration
-- 📧 Automated renewal notifications
-- 📊 Contract analytics and reporting
-- 🔔 Custom workflow and approval chains
-- 📝 Contract templates
-- 🔍 Advanced search and filtering
-- 📈 Dashboard with contract insights
-
-## Getting Started
+## Getting started
 
 ### Prerequisites
 

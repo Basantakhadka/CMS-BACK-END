@@ -1,4 +1,4 @@
-import { PermissionsCheckerService } from "CMS-BACK-END/src/feature/auth/services/permissions-checker.service";
+// import { PermissionsCheckerService } from "@app/feature/auth/services/permissions-checker.service";
 import { Result } from "@app/feature/common/result";
 import {
 	CallHandler,
@@ -19,7 +19,7 @@ import { RequestContext } from "../middleware/request_context";
 export class PermissionInterceptor implements NestInterceptor {
 	constructor(
 		private readonly als: AsyncLocalStorage<RequestContext>,
-		private readonly permissionsService: PermissionsCheckerService
+		// private readonly permissionsService: PermissionsCheckerService
 	) {}
 	async intercept(
 		context: ExecutionContext,
@@ -44,10 +44,10 @@ export class PermissionInterceptor implements NestInterceptor {
 			} else {
 				try {
 					const userId = this.als.getStore()["currentUser"]?.loginId;
-					authorized = await this.permissionsService.execute(
-						userId,
-						urlPermissions
-					);
+					// authorized = await this.permissionsService.execute(
+					// 	userId,
+					// 	urlPermissions
+					// );
 				} catch (error) {
 					Logger.error("Authorize error", error);
 				}

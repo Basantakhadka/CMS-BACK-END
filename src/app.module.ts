@@ -10,29 +10,21 @@ import { DatabaseModule } from "./core/db/database.module";
 import { DataSourceModule } from "./core/db/datasource.module";
 import { RequestContextMiddleware } from "./core/middleware/RequestContextMiddleware";
 import { AlsModule } from "./core/middleware/als.module";
-import { NotificationModule } from "./core/notification/notification.module";
-import { OtpModule } from "./core/otp/otp.module";
-import { AuthModule } from "./feature/auth/auth.module";
-import { IdentityAndAccessModule } from "./feature/identity-access/identity-access.module";
-import { ContractsModule } from "./feature/contracts/contracts.module";
 
-import { entities } from "./shared/entities";
+import { AuthModule } from "./feature/auth/auth.module";
+
+// import { entities } from "../src/shared/entities/index";
 import { AppService } from "./app.service";
 import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
 	imports: [
-		DataSourceModule,
-		OtpModule,
 		DatabaseModule,
-		TypeOrmModule.forFeature(entities),
+		// TypeOrmModule.forFeature(entities),
 		AlsModule,
 		CoreModule,
 		AuthModule,
-		NotificationModule,
 		CustomCacheModule,
-		IdentityAndAccessModule,
-		ContractsModule,
 		EventEmitterModule.forRoot()
 	],
 	controllers: [AppController],

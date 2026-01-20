@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { users } from 'CMS-BACK-END/test/mock/users.response';
+import { users } from '@test/mock/users.response';
 
 import { CreateUserDto } from '@app/feature/users/dto/create.user.dto';
 import { UpdateUserDto } from '@app/feature/users/dto/update.user.dto';

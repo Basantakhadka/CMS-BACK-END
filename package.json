@@ -1,7 +1,7 @@
 {
-	"name": "contract-management-system-backend",
-	"version": "1.0.0",
-	"description": "A NestJS-based Contract Management System backend with authentication, authorization, and core contract lifecycle management features",
+	"name": "cms-back-end",
+	"version": "0.0.1",
+	"description": "",
 	"private": true,
 	"scripts": {
 		"prebuild": "rimraf dist",
@@ -30,20 +30,18 @@
 		"doc": "npx @compodoc/compodoc -p tsconfig.json --includesName Documentation --includes wiki/docs --theme stripe",
 		"document": "npx @compodoc/compodoc -p tsconfig.json --includesName Documentation --includes wiki/docs --theme stripe -s"
 	},
-	"author": "Basanta Khadka",
-	"license": "MIT",
+	"author": "",
+	"license": "",
 	"keywords": [
-		"contract-management",
-		"cms",
-		"nestjs",
-		"typescript",
-		"rest-api",
-		"authentication",
-		"authorization",
-		"typeorm",
-		"postgresql"
+		"nestjs-boilerplate",
+		"nestjs-objection",
+		"nestjs-starter-template",
+		"nestjs-template",
+		"nestjs-starter-kit",
+		"nestjs-skeleton",
+		"nestjs-rest-api"
 	],
-	"homepage": "https://github.com/Basanta-Khadka-Citytech/contract-management-system-backend",
+	"homepage": "",
 	"dependencies": {
 		"@golevelup/ts-jest": "^0.4.0",
 		"@nestjs/common": "^8.4.7",

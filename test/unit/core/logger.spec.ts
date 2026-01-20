@@ -2,8 +2,8 @@ import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AppModule } from 'CMS-BACK-END/src/app.module';
-import AppLogger from 'CMS-BACK-END/src/core/logger/AppLogger';
+import { AppModule } from '@app/app.module';
+import AppLogger from '@app/core/logger/AppLogger';
 
 describe('Testing logger', () => {
   let app: INestApplication;

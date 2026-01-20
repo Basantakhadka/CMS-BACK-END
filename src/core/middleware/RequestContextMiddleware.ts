@@ -1,5 +1,5 @@
 import { publicRoutes } from '@app/feature/common/publicRoutes';
-import { InstitutionCodePrefixType } from 'CMS-BACK-END/src/shared/constants/institution-code-prefix.constant';
+import { InstitutionCodePrefixType } from '@app/shared/constants/institution-code-prefix.constant';
 import { ForbiddenException, Injectable, NestMiddleware } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
 import { Request, Response } from 'express';
@@ -14,7 +14,7 @@ import { RequestContext } from './request_context';
 import { sseRoutes } from '@app/feature/common/publicRoutes';
 import { CacheFactory } from '../cache/cache.factory';
 import { decrypt } from '../auth/encryption';
-import { decodeBase64 } from 'CMS-BACK-END/src/shared/utils/base64-utils';
+import { decodeBase64 } from '@app/shared/utils/base64-utils';
 
 @Injectable()
 export class RequestContextMiddleware implements NestMiddleware {

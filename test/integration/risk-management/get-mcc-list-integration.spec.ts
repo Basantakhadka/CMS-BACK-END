@@ -1,18 +1,18 @@
-import { DatasourceService } from "CMS-BACK-END/src/core/db/datasource.service";
-import { CurrentUser } from "CMS-BACK-END/src/core/middleware/current_user";
-import { RequestContext } from "CMS-BACK-END/src/core/middleware/request_context";
-import { CoreModule } from "CMS-BACK-END/src/core/module";
+import { DatasourceService } from "@app/core/db/datasource.service";
+import { CurrentUser } from "@app/core/middleware/current_user";
+import { RequestContext } from "@app/core/middleware/request_context";
+import { CoreModule } from "@app/core/module";
 import { Result } from "@app/feature/common/result";
 import { LookupDataEntity } from "@app/feature/merchants-onboarding/entities/lookup-data.entity";
 import { LookupDataDbRepository } from "@app/feature/merchants-onboarding/repositories/db/lookup-data.repository";
 import { LookupDataRepository } from "@app/feature/merchants-onboarding/repositories/lookup-data.repository";
 import { GetMccCategoryListUsecase } from "@app/feature/risk-management/usecases/get-mcc-category-list.usecase";
 import { GetMccCategoryListRequest } from "@app/feature/risk-management/usecases/request/get-mcc-category-list.request";
-import { InstitutionCodePrefixType } from "CMS-BACK-END/src/shared/constants/institution-code-prefix.constant";
+import { InstitutionCodePrefixType } from "@app/shared/constants/institution-code-prefix.constant";
 import { BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DatabaseTestModule } from "CMS-BACK-END/test/core/db/database.module.test";
+import { DatabaseTestModule } from "@test/core/db/database.module.test";
 import { AsyncLocalStorage } from "async_hooks";
 
 describe("GetMccCategoryListUsecase", () => {

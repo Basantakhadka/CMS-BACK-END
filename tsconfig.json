@@ -9,23 +9,14 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2017",
     "sourceMap": true,
-    "outDir": "CMS-BACK-END/dist",
+    "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
     "paths": {
-      "@app": [
-        "CMS-BACK-END/src"
-      ],
-      "@app/*": [
-        "CMS-BACK-END/src/*"
-      ],
-      "@test/*": [
-        "CMS-BACK-END/test/*"
-      ]
+      "@app": ["src"],
+      "@app/*": ["src/*"],
+      "@test/*": ["test/*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "CMS-BACK-END/dist"
-  ]
+  "exclude": ["node_modules", "dist"]
 }

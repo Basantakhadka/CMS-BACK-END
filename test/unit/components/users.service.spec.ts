@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { userStub } from 'CMS-BACK-END/test/mock/user.stub';
+import { userStub } from '@test/mock/user.stub';
 
 import { CreateUserDto } from '@app/feature/users/dto/create.user.dto';
 import { UpdateUserDto } from '@app/feature/users/dto/update.user.dto';

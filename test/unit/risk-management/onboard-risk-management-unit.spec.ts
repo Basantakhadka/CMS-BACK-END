@@ -1,6 +1,6 @@
-import { DatasourceService } from "CMS-BACK-END/src/core/db/datasource.service";
-import { RequestContext } from "CMS-BACK-END/src/core/middleware/request_context";
-import { CoreModule } from "CMS-BACK-END/src/core/module";
+import { DatasourceService } from "@app/core/db/datasource.service";
+import { RequestContext } from "@app/core/middleware/request_context";
+import { CoreModule } from "@app/core/module";
 import { OnboardRiskManagementRequestDto } from "@app/feature/risk-management/dtos/onboard-risk-management-request.dto";
 import { RisksManagementEntity } from "@app/feature/risk-management/entities/risks-management.entity";
 import { RiskTransactionVelocityEntity } from "@app/feature/risk-management/entities/risks-transaction-velocity.entity";
@@ -9,7 +9,7 @@ import { RisksManagementDbRepository } from "@app/feature/risk-management/reposi
 import { OnboardRiskManagementUsecase } from "@app/feature/risk-management/usecases/onboard-risk-management.usecase";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DatabaseTestModule } from "CMS-BACK-END/test/core/db/database.module.test";
+import { DatabaseTestModule } from "@test/core/db/database.module.test";
 import { AsyncLocalStorage } from "async_hooks";
 
 // Mock entities and repositories

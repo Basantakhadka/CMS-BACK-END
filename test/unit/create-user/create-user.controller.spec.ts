@@ -1,14 +1,14 @@
 import { CassandradbService } from "@app/core/db/cassandra.service";
-import { CurrentUser } from "CMS-BACK-END/src/core/middleware/current_user";
-import { RequestContext } from "CMS-BACK-END/src/core/middleware/request_context";
+import { CurrentUser } from "@app/core/middleware/current_user";
+import { RequestContext } from "@app/core/middleware/request_context";
 import { Result } from "@app/feature/common/result";
-import { BankBranchesDbRepository } from "CMS-BACK-END/src/feature/identity-access/repositories/db/bank-branches.repository";
-import { RolesDbRepository } from "CMS-BACK-END/src/feature/identity-access/repositories/db/roles.repository";
-import { UserChangeRequestDbRepository } from "CMS-BACK-END/src/feature/identity-access/repositories/db/user-change-request.repository";
-import { UserDbRepository } from "CMS-BACK-END/src/feature/identity-access/repositories/db/user.repository";
-import { AddUserUsecase } from "CMS-BACK-END/src/feature/identity-access/usecases/add-user.usecase";
-import { AddUserUsecaseRequest } from "CMS-BACK-END/src/feature/identity-access/usecases/requests/add-user.usecase.request";
-import { AddUserUsecaseResponse } from "CMS-BACK-END/src/feature/identity-access/usecases/response/add-user.usecase.response";
+import { BankBranchesDbRepository } from "@app/feature/identity-access/repositories/db/bank-branches.repository";
+import { RolesDbRepository } from "@app/feature/identity-access/repositories/db/roles.repository";
+import { UserChangeRequestDbRepository } from "@app/feature/identity-access/repositories/db/user-change-request.repository";
+import { UserDbRepository } from "@app/feature/identity-access/repositories/db/user.repository";
+import { AddUserUsecase } from "@app/feature/identity-access/usecases/add-user.usecase";
+import { AddUserUsecaseRequest } from "@app/feature/identity-access/usecases/requests/add-user.usecase.request";
+import { AddUserUsecaseResponse } from "@app/feature/identity-access/usecases/response/add-user.usecase.response";
 import { WorkflowGroupDbRepository } from "@app/feature/workflow/repository/db/workflow-group.repository";
 import { WorkflowTasksDbRepository } from "@app/feature/workflow/repository/db/workflow-tasks.repository";
 

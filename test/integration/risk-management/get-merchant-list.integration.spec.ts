@@ -1,7 +1,7 @@
-import { DatasourceService } from "CMS-BACK-END/src/core/db/datasource.service";
-import { CurrentUser } from "CMS-BACK-END/src/core/middleware/current_user";
-import { RequestContext } from "CMS-BACK-END/src/core/middleware/request_context";
-import { CoreModule } from "CMS-BACK-END/src/core/module";
+import { DatasourceService } from "@app/core/db/datasource.service";
+import { CurrentUser } from "@app/core/middleware/current_user";
+import { RequestContext } from "@app/core/middleware/request_context";
+import { CoreModule } from "@app/core/module";
 import { Result } from "@app/feature/common/result";
 import { RiskManagementListResponseDto } from "@app/feature/risk-management/dtos/risk-management-list.dto.response";
 import { RiskAffectedMerchantsView } from "@app/feature/risk-management/entities/risk-affected-merchants.view";
@@ -11,12 +11,12 @@ import { RiskTransactionVolumeEntity } from "@app/feature/risk-management/entiti
 import { RisksManagementDbRepository } from "@app/feature/risk-management/repositories/db/risks-management.repository";
 import { GetRiskManagementListUsecase } from "@app/feature/risk-management/usecases/get-risk-management-list.usecase";
 import { GetRiskManagementListUsecaseRequest } from "@app/feature/risk-management/usecases/request/get-risk-management-list.usecase.request";
-import { RiskTypeConstant } from "CMS-BACK-END/src/shared/constants/risk-type.constant";
-import { ToggleStatusConstant } from "CMS-BACK-END/src/shared/constants/toggle-status.constant";
+import { RiskTypeConstant } from "@app/shared/constants/risk-type.constant";
+import { ToggleStatusConstant } from "@app/shared/constants/toggle-status.constant";
 import { BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DatabaseTestModule } from "CMS-BACK-END/test/core/db/database.module.test";
+import { DatabaseTestModule } from "@test/core/db/database.module.test";
 import { AsyncLocalStorage } from "async_hooks";
 
 describe('GetRiskManagementListUsecase', () => {

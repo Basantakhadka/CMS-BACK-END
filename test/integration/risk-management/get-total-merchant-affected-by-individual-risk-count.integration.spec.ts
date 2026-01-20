@@ -1,7 +1,7 @@
-import { DatasourceService } from "CMS-BACK-END/src/core/db/datasource.service";
-import { CurrentUser } from "CMS-BACK-END/src/core/middleware/current_user";
-import { RequestContext } from "CMS-BACK-END/src/core/middleware/request_context";
-import { CoreModule } from "CMS-BACK-END/src/core/module";
+import { DatasourceService } from "@app/core/db/datasource.service";
+import { CurrentUser } from "@app/core/middleware/current_user";
+import { RequestContext } from "@app/core/middleware/request_context";
+import { CoreModule } from "@app/core/module";
 import { Result } from "@app/feature/common/result";
 import { RiskAffectedMerchantsView } from "@app/feature/risk-management/entities/risk-affected-merchants.view";
 import { RisksManagementEntity } from "@app/feature/risk-management/entities/risks-management.entity";
@@ -14,7 +14,7 @@ import { GetTotalMerchantAffectedByIndividualRiskCountUsecaseRequest } from "@ap
 import { BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DatabaseTestModule } from "CMS-BACK-END/test/core/db/database.module.test";
+import { DatabaseTestModule } from "@test/core/db/database.module.test";
 import { AsyncLocalStorage } from "async_hooks";
 
 describe('GetTotalMerchantAffectedByIndividualRiskCountUsecase', () => {

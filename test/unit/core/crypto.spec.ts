@@ -2,8 +2,8 @@ import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AppModule } from 'CMS-BACK-END/src/app.module';
-import { decrypt, encrypt } from 'CMS-BACK-END/src/core/crypto/crypto';
+import { AppModule } from '@app/app.module';
+import { decrypt, encrypt } from '@app/core/crypto/crypto';
 
 describe('Testing Encryption-Decryption', () => {
   let app: INestApplication;

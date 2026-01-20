@@ -2,8 +2,8 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DiscoveryModule } from '@nestjs/core';
 
-import config from 'CMS-BACK-END/src/config/index';
-import { exportProvider, getProviders } from 'CMS-BACK-END/src/core/providers';
+import config from '@app/config/index';
+import { exportProvider, getProviders } from '@app/core/providers';
 
 @Global()
 @Module({

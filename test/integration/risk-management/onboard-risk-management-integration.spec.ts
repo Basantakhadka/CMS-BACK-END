@@ -1,9 +1,9 @@
-import { DatasourceService } from "CMS-BACK-END/src/core/db/datasource.service";
-import { CurrentUser } from "CMS-BACK-END/src/core/middleware/current_user";
-import { RequestContext } from "CMS-BACK-END/src/core/middleware/request_context";
-import { CoreModule } from "CMS-BACK-END/src/core/module";
+import { DatasourceService } from "@app/core/db/datasource.service";
+import { CurrentUser } from "@app/core/middleware/current_user";
+import { RequestContext } from "@app/core/middleware/request_context";
+import { CoreModule } from "@app/core/module";
 import { ChangeRequestsDbRepository } from "@app/feature/change-requests/repositories/db/change-requests.repository";
-import { UserDbRepository } from "CMS-BACK-END/src/feature/identity-access/repositories/db/user.repository";
+import { UserDbRepository } from "@app/feature/identity-access/repositories/db/user.repository";
 import { LookupDataDbRepository } from "@app/feature/merchants-onboarding/repositories/db/lookup-data.repository";
 import { OnboardRiskManagementRequestDto, TransactionVelocitySetupDto } from "@app/feature/risk-management/dtos/onboard-risk-management-request.dto";
 import { RisksManagementEntity } from "@app/feature/risk-management/entities/risks-management.entity";
@@ -17,7 +17,7 @@ import { WorkflowPermissionService } from "@app/feature/workflow/services/workfl
 import { WorkflowProcessService } from "@app/feature/workflow/services/workflow-process.service";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DatabaseTestModule } from "CMS-BACK-END/test/core/db/database.module.test";
+import { DatabaseTestModule } from "@test/core/db/database.module.test";
 import { AsyncLocalStorage } from "async_hooks";
 
 describe("Onboard Risk Management Integration", () => {

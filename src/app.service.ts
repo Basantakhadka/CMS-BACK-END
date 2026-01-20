@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { JwtStrategy } from "CMS-BACK-END/src/core/auth/JwtStrategy";
-import { Result } from "@app/feature/common/result";
+import { JwtStrategy } from "@app/core/auth/JwtStrategy";
+import { Result } from "./feature/common/result";
 
 @Injectable()
 export class AppService {
@@ -14,6 +14,7 @@ export class AppService {
 		const isTokenValid = await this.jwtStrategy.verify(token);
 		if (!isTokenValid) {
 			return Result.createError(new BadRequestException("Token is invalid!"));
+
 		}
 		return { tokenValid: true };
 	}
