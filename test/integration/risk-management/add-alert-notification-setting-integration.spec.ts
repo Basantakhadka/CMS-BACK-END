@@ -1,17 +1,17 @@
-import { DatasourceService } from "CMS-BACK-END/src/core/db/datasource.service";
-import { CurrentUser } from "CMS-BACK-END/src/core/middleware/current_user";
-import { RequestContext } from "CMS-BACK-END/src/core/middleware/request_context";
-import { CoreModule } from "CMS-BACK-END/src/core/module";
+import { DatasourceService } from "@app/core/db/datasource.service";
+import { CurrentUser } from "@app/core/middleware/current_user";
+import { RequestContext } from "@app/core/middleware/request_context";
+import { CoreModule } from "@app/core/module";
 import { MessagingManagementSettingsEntity } from "@app/feature/messaging-management-settings/entities/messaging-management-settings.entity";
 import { MessagingManagementSettingsDbRepository } from "@app/feature/messaging-management-settings/repositories/db/messaging-management-settings-db.repository";
 import { MessagingManagementSettingsRepository } from "@app/feature/messaging-management-settings/repositories/messaging-management-settings.repository";
 import { AddUpdateAlertNotificationSettingUsecase } from "@app/feature/risk-management/usecases/add-alert-notification-setting.usecase";
 import { AddUpdateAlertNotificationSettingRequest } from "@app/feature/risk-management/usecases/request/add-alert-notification-setting.request";
-import { InstitutionCodePrefixType } from "CMS-BACK-END/src/shared/constants/institution-code-prefix.constant";
+import { InstitutionCodePrefixType } from "@app/shared/constants/institution-code-prefix.constant";
 import { BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DatabaseTestModule } from "CMS-BACK-END/test/core/db/database.module.test";
+import { DatabaseTestModule } from "@test/core/db/database.module.test";
 import { AsyncLocalStorage } from "async_hooks";
 
 describe('AddAlertNotificationSettingIntegration', () => {

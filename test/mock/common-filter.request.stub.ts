@@ -1,4 +1,4 @@
-import { SortMeta, SortOrder } from "CMS-BACK-END/src/core/repository/search/sort.meta"
+import { SortMeta, SortOrder } from "@app/core/repository/search/sort.meta"
 
 export const commonFilterRequestStub = ()=>{
     return {

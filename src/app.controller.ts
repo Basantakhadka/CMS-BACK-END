@@ -1,9 +1,8 @@
 import {Controller, Get, Inject, Req} from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
-import { AppService } from "CMS-BACK-END/src/app.service";
-import AppLogger from "CMS-BACK-END/src/core/logger/AppLogger";
-import { KafkaConnector } from "./core/kafka/producer/kafka-connector";
+import { AppService } from "@app/app.service";
+import AppLogger from "@app/core/logger/AppLogger";
 
 @ApiTags("nest_app")
 @Controller()
@@ -11,7 +10,6 @@ export class AppController {
 	constructor(
 		private readonly appService: AppService,
 		private readonly appLogger: AppLogger,
-		private readonly kafkaConnector: KafkaConnector
 	) {}
 
 	@Get()
@@ -24,7 +22,6 @@ export class AppController {
 	ping(): object {
 		this.appLogger.log("PING called");
 		const logData = {
-			kafkaStatus: this.kafkaConnector.getConnectionStatus(),
 			applicationStatus: "Application running",
 		};
 		return logData;

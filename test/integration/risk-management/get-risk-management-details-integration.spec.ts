@@ -1,23 +1,23 @@
-import { DatasourceService } from "CMS-BACK-END/src/core/db/datasource.service";
-import { CurrentUser } from "CMS-BACK-END/src/core/middleware/current_user";
-import { RequestContext } from "CMS-BACK-END/src/core/middleware/request_context";
-import { CoreModule } from "CMS-BACK-END/src/core/module";
+import { DatasourceService } from "@app/core/db/datasource.service";
+import { CurrentUser } from "@app/core/middleware/current_user";
+import { RequestContext } from "@app/core/middleware/request_context";
+import { CoreModule } from "@app/core/module";
 import { RisksManagementEntity } from "@app/feature/risk-management/entities/risks-management.entity";
 import { RiskTransactionVelocityEntity } from "@app/feature/risk-management/entities/risks-transaction-velocity.entity";
 import { RiskTransactionVolumeEntity } from "@app/feature/risk-management/entities/risks-transaction-volume.entity";
 import { RisksManagementDbRepository } from "@app/feature/risk-management/repositories/db/risks-management.repository";
 import { GetRiskManagementDetailsUsecase } from "@app/feature/risk-management/usecases/get-risk-management-details.usecase"
 import { GetRiskManagementDetailsRequest } from "@app/feature/risk-management/usecases/request/get-risk-management-details.request";
-import { CheckAssignedInstitutionTypeService } from "CMS-BACK-END/src/shared/services/check-assigned-institution-type.service";
+import { CheckAssignedInstitutionTypeService } from "@app/shared/services/check-assigned-institution-type.service";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DatabaseTestModule } from "CMS-BACK-END/test/core/db/database.module.test";
+import { DatabaseTestModule } from "@test/core/db/database.module.test";
 import { AsyncLocalStorage } from "async_hooks";
 import {BadRequestException} from "@nestjs/common";
 import {
     GetRiskManagementDetailsStub,
     GetRiskManagementEmptyVelocityAndVolumeDetailsStub
-} from "CMS-BACK-END/test/mock/risk-management/response/get-risk-management-details.stub";
+} from "@test/mock/risk-management/response/get-risk-management-details.stub";
 
 describe('Get Risk Management Details Integration Test', () => {
     let usecase: GetRiskManagementDetailsUsecase

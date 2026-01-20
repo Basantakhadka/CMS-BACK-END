@@ -1,5 +1,5 @@
 import { JwtService, JwtSignOptions } from "@nestjs/jwt";
-import { encrypt } from "CMS-BACK-END/src/core/auth/encryption";
+import { encrypt } from "@app/core/auth/encryption";
 
 export class JwtStrategy {
 	constructor(private jwtService: JwtService) {

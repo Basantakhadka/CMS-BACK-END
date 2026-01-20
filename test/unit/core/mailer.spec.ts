@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { CoreModule } from 'CMS-BACK-END/src/core/module';
-import { EmailHandlerService } from 'CMS-BACK-END/src/shared/mailer/mailer.service';
+import { CoreModule } from '@app/core/module';
+import { EmailHandlerService } from '@app/shared/mailer/mailer.service';
 
 jest.mock('nodemailer', () => ({
   createTransport: jest.fn().mockReturnValue({

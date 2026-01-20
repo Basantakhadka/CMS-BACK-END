@@ -21,11 +21,11 @@ export class DatabaseMiddleware implements NestMiddleware {
 	async use(req: Request, res: Response, next: NextFunction) {
 		const schema = this.als.getStore()["currentUser"].schema;
 		if (req.originalUrl.includes("login")) {
-			let schemas: Record<"schema", string>[] = [];
+			let schemas: any;
 			try {
 				schemas = await this.datasourceService.connections[
 					SystemsConstant.SHARED_KEYSPACE
-				].query(`SELECT nspname as schema FROM pg_catalog.pg_namespace;`);
+				];
 			} catch (error) {
 				Logger.error("DB CONNECTION ERROR", error?.message);
 				throw new DatabaseException("Service temporarily unavailable");

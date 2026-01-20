@@ -4,13 +4,13 @@ import cors from "cors";
 import { json, urlencoded } from "express";
 import helmet from "helmet";
 
-import { shouldCompress } from "CMS-BACK-END/src/core/compression/compression";
-import { corsOptions } from "CMS-BACK-END/src/core/cors.config";
+import { shouldCompress } from "@app/core/compression/compression";
+import { corsOptions } from "@app/core/cors.config";
 import {
 	ErrorHandler,
 	RequestHandler,
 	ResponseHandler,
-} from "CMS-BACK-END/src/core/middleware";
+} from "@app/core/middleware";
 
 import { RequestContextMiddleware } from "./middleware/RequestContextMiddleware";
 import { AuthTokenStrategy } from "./auth/authtoken.strategy";

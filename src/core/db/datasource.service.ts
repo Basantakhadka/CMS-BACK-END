@@ -1,4 +1,4 @@
-import { entities } from "CMS-BACK-END/src/shared/entities";
+import { entities } from "@app/shared/entities";
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { AsyncLocalStorage } from "async_hooks";
 import { DataSource, ObjectLiteral, Repository } from "typeorm";
@@ -18,6 +18,7 @@ export class DatasourceService implements OnModuleInit {
     await this.createDatasource(SystemsConstant.SHARED_KEYSPACE);
   }
   async createDatasource(schema: string) {
+    console.log({ schema })
     try {
       const dataSource = new DataSource({
         type: "postgres",
@@ -28,8 +29,8 @@ export class DatasourceService implements OnModuleInit {
         database: process.env.DB_NAME,
         schema,
         name: schema,
-        entities: entities,
-        namingStrategy: new SnakeNamingStrategy(),
+        // entities: entities,
+        // namingStrategy: new SnakeNamingStrategy(),
       });
       if (!this.connections[schema]) {
         this.connections[schema] = dataSource;

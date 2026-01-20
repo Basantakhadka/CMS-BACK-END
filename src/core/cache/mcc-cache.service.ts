@@ -1,4 +1,4 @@
-import { CacheFactory } from 'CMS-BACK-END/src/core/cache/cache.factory';
+import { CacheFactory } from '@app/core/cache/cache.factory';
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';

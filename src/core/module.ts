@@ -2,7 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DiscoveryModule } from '@nestjs/core';
 
-import config from 'CMS-BACK-END/src/config/index';
+import config from '@app/config/index';
 
 import { exportProvider, getProviders } from './providers';
 

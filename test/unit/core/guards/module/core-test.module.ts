@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import config from 'CMS-BACK-END/src/config/index';
+import config from '@app/config/index';
 
 @Global()
 @Module({

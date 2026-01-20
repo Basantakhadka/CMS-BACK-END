@@ -3,8 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { StatusCodes } from 'http-status-codes';
 import request from 'supertest';
 
-import { AppModule } from 'CMS-BACK-END/src/app.module';
-import coreBootstrap from 'CMS-BACK-END/src/core/bootstrap';
+import { AppModule } from '@app/app.module';
+import coreBootstrap from '@app/core/bootstrap';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;

@@ -11,9 +11,8 @@ import { TokenIntegrityValidator } from "./tokenIntegrityValidator";
 import { UserPoolService } from "../cache/user-pool.service";
 import { MFASTATUS } from "@app/feature/constants";
 import { DatabaseException } from "../exception/database.exception";
-import { decrypt, encrypt } from "CMS-BACK-END/src/core/auth/encryption";
+import { decrypt, encrypt } from "@app/core/auth/encryption";
 import { CacheFactory } from "../cache/cache.factory";
-import { IdGenerator } from "CMS-BACK-END/src/shared/id-generator";
 
 export class AuthTokenStrategy {
 	static async parseToken(
