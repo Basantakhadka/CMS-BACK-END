@@ -13,15 +13,16 @@ import { AlsModule } from "./core/middleware/als.module";
 
 import { AuthModule } from "./feature/auth/auth.module";
 
-import { entities } from "../src/shared/entities/index";
+
 import { AppService } from "./app.service";
 import { EventEmitterModule } from "@nestjs/event-emitter";
+import { entities } from "./shared/entities";
 
 @Module({
 	imports: [
 		DatabaseModule,
 		DataSourceModule,
-		// TypeOrmModule.forFeature(entities),
+		TypeOrmModule.forFeature(entities),
 		AlsModule,
 		CoreModule,
 		AuthModule,

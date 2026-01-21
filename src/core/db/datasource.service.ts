@@ -2,6 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DataSource, ObjectLiteral, Repository } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { entities } from '@app/shared/entities';
+import { UserCredential } from '@app/feature/identity-access/entities/user-credential.entity';
 
 type Entity<T extends ObjectLiteral> = new (...args: any[]) => T;
 
@@ -13,7 +14,7 @@ export interface CustomRepository<T> extends Repository<T> {
 export class DatasourceService implements OnModuleInit {
   private dataSource: DataSource;
   private readonly schema = 'cms_portal'; // <-- your single schema
-
+  connections: Record<string, DataSource> = {};
   async onModuleInit() {
     await this.initializeDatasource();
   }
@@ -59,7 +60,7 @@ export class DatasourceService implements OnModuleInit {
    * Get repository for an entity
    */
   async getRepository<T extends ObjectLiteral>(
-    entity: Entity<T>,
+    entity: Entity<T>, schema?: string
   ): Promise<CustomRepository<T>> {
     const ds = await this.initializeDatasource();
     const repository = ds.getRepository<T>(entity) as CustomRepository<T>;
