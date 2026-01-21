@@ -1,12 +1,16 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
-import redisStore from "cache-manager-redis-store";
+import { Injectable, OnModuleInit } from '@nestjs/common';
+
+interface CacheItem {
+	value: any;
+	expiresAt?: number;
+}
 
 @Injectable()
 export class CacheFactory implements OnModuleInit {
 	private static instance: CacheFactory;
-	private caches: Record<string, Cache>;
+	private caches: Record<string, Map<string, CacheItem>>;
 
-	constructor() {
+	constructor () {
 		if (!CacheFactory.instance) {
 			this.caches = {};
 			CacheFactory.instance = this;
@@ -15,23 +19,17 @@ export class CacheFactory implements OnModuleInit {
 	}
 
 	async onModuleInit() {
-		// Initialize the default cache on module init
-		await this.getOrCreateCache("getpay");
+		// Initialize default cache
+		await this.getOrCreateCache('default');
 	}
 
-	private async createCache(name: string): Promise<Cache> {
-		const redisConfig = {
-			host: process.env.REDIS_HOST || "localhost",
-			port: process.env.REDIS_PORT || "6379",
-			password: process.env.REDIS_PASSWORD || "",
-		};
-
-		const store = redisStore.create(redisConfig);
+	private async createCache(name: string): Promise<Map<string, CacheItem>> {
+		const store = new Map<string, CacheItem>();
 		this.caches[name] = store;
 		return store;
 	}
 
-	async getOrCreateCache(name: string = "getpay"): Promise<any> {
+	async getOrCreateCache(name: string = 'default'): Promise<Map<string, CacheItem>> {
 		if (!this.caches[name]) {
 			return this.createCache(name);
 		}
@@ -41,30 +39,35 @@ export class CacheFactory implements OnModuleInit {
 	async cacheData(
 		key: string,
 		data: any,
-		config?: { ttl?: number; max?: number }
+		config?: { ttl?: number } // ttl in seconds
 	): Promise<void> {
-		const redisCache = await this.getOrCreateCache();
-		const ttl =  config?.ttl;
-
-		await redisCache.set(key, data, {ttl});
+		const cache = await this.getOrCreateCache();
+		const expiresAt = config?.ttl ? Date.now() + config.ttl * 1000 : undefined;
+		cache.set(key, { value: data, expiresAt });
 	}
 
 	async getCachedData<T>(key: string): Promise<T | undefined> {
-		const redisCache = await this.getOrCreateCache();
-		return redisCache.get(key);
+		const cache = await this.getOrCreateCache();
+		const item = cache.get(key);
+
+		if (!item) return undefined;
+
+		// Check TTL
+		if (item.expiresAt && item.expiresAt < Date.now()) {
+			cache.delete(key);
+			return undefined;
+		}
+
+		return item.value as T;
 	}
 
 	async deleteCachedData(key: string): Promise<void> {
-		try {
-			const redisCache = await this.getOrCreateCache();
-			await redisCache.del(key);
-		} catch (err) {
-			console.log(`Error while delete redis key value ${err}`);
-		}
+		const cache = await this.getOrCreateCache();
+		cache.delete(key);
 	}
 
 	async reset(): Promise<void> {
-		const redisCache = await this.getOrCreateCache();
-		await redisCache.reset();
+		const cache = await this.getOrCreateCache();
+		cache.clear();
 	}
 }
