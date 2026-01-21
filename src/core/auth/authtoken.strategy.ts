@@ -36,7 +36,6 @@ export class AuthTokenStrategy {
 				exp: decodedRawToken["exp"],
 				iss: decodedRawToken["iss"],
 				sub: decodedRawToken["sub"],
-				jti: decodedRawToken["jti"],
 			};
 
 			if (!decodedToken || decodedToken["iss"] !== process.env.JWT_ISSUER) {
@@ -51,10 +50,9 @@ export class AuthTokenStrategy {
 				decodedToken["sub"],
 				decodedToken["userId"],
 				decodedToken["fullName"],
-				decodedToken["institutionCode"],
 				decodedToken["schema"],
 				decodedToken["username"],
-				decodedToken["institutionType"]
+
 			);
 			// await tokenIntegrityValidator.validateToken(decodedToken);
 
@@ -64,17 +62,16 @@ export class AuthTokenStrategy {
 			) {
 				await userPoolService.validateSession(
 					decodedToken["userId"],
-					decodedToken["institutionCode"],
 					decodedToken["sessionId"]
 				);
 
 				await userPoolService.refreshSession(
 					decodedToken["userId"],
-					decodedToken["institutionCode"]
+
 				);
 			}
 
-			return new RequestContext(currentUser, decodedRawToken["jti"]);
+			return new RequestContext(currentUser);
 		} catch (err) {
 			console.log("TOKEN EXCEPTION::::",err)
 			if (err instanceof DatabaseException) {
@@ -85,7 +82,7 @@ export class AuthTokenStrategy {
 				if (decodedToken) {
 					userPoolService.revokeSession(
 						decodedToken["userId"],
-						decodedToken["institutionCode"]
+
 					);
 				}
 				throw new UnauthorizedException(
@@ -114,7 +111,6 @@ export class AuthTokenStrategy {
 				exp: decodedRawToken["exp"],
 				iss: decodedRawToken["iss"],
 				sub: decodedRawToken["sub"],
-				jti: decodedRawToken["jti"],
 			};
 
 			if (!decodedToken || decodedToken["iss"] !== process.env.JWT_ISSUER) {
@@ -125,13 +121,11 @@ export class AuthTokenStrategy {
 				userId: decodedToken["userId"],
 				version: decodedToken["version"],
 				fullName: decodedToken["fullName"],
-				institutionCode: decodedToken["institutionCode"],
 				roles: decodedToken["roles"],
 				username: decodedToken["username"],
 				schema: decodedToken["schema"],
 				enforcePasswordChange: decodedToken["enforcePasswordChange"],
 				MFAStatus: decodedToken["MFAStatus"],
-				institutionType: decodedToken["institutionType"],
 				sessionId: decodedToken["sessionId"],
 			};
 
@@ -151,7 +145,6 @@ export class AuthTokenStrategy {
 
 			const jwtSignOption: JwtSignOptions = {
 				subject: decodedRawToken["sub"],
-				jwtid: decodedRawToken["jti"],
 			};
 
 			const accessToken = jwtService.sign(
@@ -160,7 +153,7 @@ export class AuthTokenStrategy {
 			);
 
 			if(!requestUrl?.includes("logout")) {
-				await cacheFactory.cacheData(decodedRawToken["jti"], accessToken, {
+				await cacheFactory.cacheData(accessToken, {
 					ttl: +process.env.JWT_EXPIRES_IN,
 				});
 			}

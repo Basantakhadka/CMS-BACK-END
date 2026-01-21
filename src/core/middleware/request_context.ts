@@ -2,18 +2,18 @@ import { CurrentUser } from "./current_user";
 
 export class RequestContext {
 	private currentUser: CurrentUser;
-	private jti: string;
+	// private jti: string;
 
-	constructor(currentUser: CurrentUser, jti: string) {
+	constructor (currentUser: CurrentUser) {
 		this.currentUser = currentUser;
-		this.jti = jti;
+		// this.jti = jti;
 	}
 
 	getCurrentUser(): CurrentUser {
 		return this.currentUser;
 	}
 
-	getJti(): string {
-		return this.jti;
-	}
+	// getJti(): string {
+	// 	return this.jti;
+	// }
 }
