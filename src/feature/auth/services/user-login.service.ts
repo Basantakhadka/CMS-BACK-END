@@ -105,25 +105,7 @@ export class UserLoginService {
 		return loginResponse;
 	}
 
-	async storeMccDetails(mccData: any) {
-		if (!this.loginCache) {
-			throw new Error("Cache not initialized");
-		}
-		await this.loginCache.set(this.CACHE_NAME, mccData, this.CACHE_CONFIG.ttl);
-	}
 
-	async getMccDetails(): Promise<
-		{
-			label: string;
-			value: string;
-			title: string;
-		}[]
-	> {
-		if (!this.loginCache) {
-			throw new Error("Cache not initialized");
-		}
-		return await this.loginCache.get(this.CACHE_NAME);
-	}
 	protected async getUsersbyRole(role: string): Promise<UserByRole[]> {
 		return await this.userRepository.findUsersByRoleId(role);
 	}

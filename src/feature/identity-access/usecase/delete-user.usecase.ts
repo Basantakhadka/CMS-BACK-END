@@ -8,30 +8,65 @@ import { UserRepository } from "../repositories/user.repository";
 
 import { DeleteUserUsecaseRequest } from "./request/delete-user.usecase.request";
 import { DeleteUserUsecaseResponse } from "./response/delete-user.usecase.response";
+import { UserCredential } from "../entities/user-credential.entity";
+import { IdGenerator } from "@app/shared/id-generator";
+import { UserPoolService } from "@app/core/cache/user-pool.service";
+import { UserCredentialRepository } from "../repositories/user-credential.repository";
+import { UserCredentialDbRepository } from "../repositories/db/user-credential.repository";
 
 
 
 export class DeleteUserUsecase implements Usecase<DeleteUserUsecaseRequest, DeleteUserUsecaseResponse> {
     constructor (
         @Inject(UserDbRepository) private readonly userRepository?: UserRepository,
+        @Inject(UserPoolService) private userPoolService?: UserPoolService,
+        @Inject(UserCredentialDbRepository)
+        private userCredentialRepository?: UserCredentialRepository,
+
 
     ) { }
     async execute(request: DeleteUserUsecaseRequest, requestContext?: RequestContext): Promise<Result<DeleteUserUsecaseResponse>> {
         const loggedInUser = requestContext.getCurrentUser().loginId;
-        const user = await this.userRepository.findById(loggedInUser);
+        console.log({ loggedInUser })
+        const user = await this.userRepository.findById(request.id);
+        console.log({ user })
 
         if (loggedInUser === request.id) Result.createError(new ForbiddenException("User cannot delete itself!"));
 
 
-        const updateUserUsecase = new DeleteUserUsecase(this.userRepository);
+        const savedUser = await this.userRepository.findById(user.id);
+        console.log({ savedUser })
+        savedUser.deleted = true;
+        await this.userRepository.update(savedUser);
+        savedUser.roles.forEach(
+            async (item) =>
+                await this.userRepository.deleteUsersByRole(item.value, savedUser.id)
+        );
+        await this.handleUserSignoutAfterDelete(user, requestContext);
         //saving requestor task 
 
         const response = new DeleteUserUsecaseResponse(user.id);
-        return Result.createSuccessWithMessage(response, "User deletion in progress");
+        return Result.createSuccessWithMessage(response, "User deletion completed");
     }
 
     protected async getUsersbyRole(role: string): Promise<UserByRole[]> {
         return await this.userRepository.findUsersByRoleId(role);
+    }
+    private async handleUserSignoutAfterDelete(
+        user: User,
+        requestContext: RequestContext
+    ) {
+        const userCredentials = await this.userCredentialRepository.findById(
+            user.id
+        );
+        const newCredentials = new UserCredential();
+        newCredentials.id = userCredentials.id;
+        newCredentials.version = IdGenerator.generateId();
+        await this.userCredentialRepository.update(newCredentials);
+        this.userPoolService.revokeSession(
+            user?.userId,
+
+        );
     }
 
     private async validateSavedUser(id: string) {
