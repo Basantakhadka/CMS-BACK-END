@@ -22,6 +22,7 @@ import { RolesDbRepository } from "./repositories/db/roles.repository";
 import { GetRolesForSelectMenuUsecase } from "./usecase/get-roles-for-select-menu.usecase";
 import { RolesTotalCountUsecase } from "./usecase/roles-total-count.usecase";
 import { GetUsersByRoleUsecase } from "./usecase/get-users-by-role.usecase";
+import { AddUserUsecase } from "./usecase/add-user.usecase";
 
 
 @Module({
@@ -32,6 +33,7 @@ import { GetUsersByRoleUsecase } from "./usecase/get-users-by-role.usecase";
 		UserDbRepository,
 		UserCredentialDbRepository,
 		GetUsersListUsecase,
+		AddUserUsecase,
 		GetOneUserUsecase,
 		DeleteUserUsecase,
 		UpdateUserUsecase,

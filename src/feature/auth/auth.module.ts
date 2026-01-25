@@ -7,6 +7,7 @@ import { UserDbRepository } from "../identity-access/repositories/db/user.reposi
 import { UserCredentialDbRepository } from "../identity-access/repositories/db/user-credential.repository";
 import { RolesDbRepository } from "../identity-access/repositories/db/roles.repository";
 import { GeneralPolicyDbRepository } from "../identity-access/repositories/db/general-policy.repository";
+import { UserLogoutUsecase } from "./usecase/user-logout.usecase";
 
 @Module({
     imports: [],
@@ -19,6 +20,7 @@ import { GeneralPolicyDbRepository } from "../identity-access/repositories/db/ge
         RolesDbRepository,
         GeneralPolicyDbRepository,
         JwtStrategy,
+        UserLogoutUsecase,
 
     ],
     exports: [

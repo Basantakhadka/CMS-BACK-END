@@ -17,6 +17,7 @@ import { AuthModule } from "./feature/auth/auth.module";
 import { AppService } from "./app.service";
 import { EventEmitterModule } from "@nestjs/event-emitter";
 import { entities } from "./shared/entities";
+import { IdentityAndAccessModule } from "./feature/identity-access/identity-access.module";
 
 @Module({
 	imports: [
@@ -26,6 +27,7 @@ import { entities } from "./shared/entities";
 		AlsModule,
 		CoreModule,
 		AuthModule,
+		IdentityAndAccessModule,
 		CustomCacheModule,
 		EventEmitterModule.forRoot()
 	],
