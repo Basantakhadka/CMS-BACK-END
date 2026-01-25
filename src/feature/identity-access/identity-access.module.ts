@@ -23,6 +23,7 @@ import { GetRolesForSelectMenuUsecase } from "./usecase/get-roles-for-select-men
 import { RolesTotalCountUsecase } from "./usecase/roles-total-count.usecase";
 import { GetUsersByRoleUsecase } from "./usecase/get-users-by-role.usecase";
 import { AddUserUsecase } from "./usecase/add-user.usecase";
+import { PermissionsCheckerService } from "../auth/services/permissions-checker.service";
 
 
 @Module({
@@ -50,6 +51,7 @@ import { AddUserUsecase } from "./usecase/add-user.usecase";
 		GetRolesForSelectMenuUsecase,
 		RolesTotalCountUsecase,
 		GetUsersByRoleUsecase,
+		PermissionsCheckerService
 
 
 

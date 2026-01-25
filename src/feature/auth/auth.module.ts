@@ -8,6 +8,7 @@ import { UserCredentialDbRepository } from "../identity-access/repositories/db/u
 import { RolesDbRepository } from "../identity-access/repositories/db/roles.repository";
 import { GeneralPolicyDbRepository } from "../identity-access/repositories/db/general-policy.repository";
 import { UserLogoutUsecase } from "./usecase/user-logout.usecase";
+import { PermissionsCheckerService } from "./services/permissions-checker.service";
 
 @Module({
     imports: [],
@@ -21,12 +22,14 @@ import { UserLogoutUsecase } from "./usecase/user-logout.usecase";
         GeneralPolicyDbRepository,
         JwtStrategy,
         UserLogoutUsecase,
+        PermissionsCheckerService,
 
     ],
     exports: [
         UserDbRepository,
         RolesDbRepository,
         UserCredentialDbRepository,
+        PermissionsCheckerService,
     ],
 })
 export class AuthModule { }

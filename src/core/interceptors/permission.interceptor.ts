@@ -13,13 +13,14 @@ import { AsyncLocalStorage } from "async_hooks";
 import { Observable } from "rxjs";
 import { PermissionsConstant } from "../constants/permissions.constant";
 import { RequestContext } from "../middleware/request_context";
+import { PermissionsCheckerService } from "@app/feature/auth/services/permissions-checker.service";
 
 @Global()
 @Injectable()
 export class PermissionInterceptor implements NestInterceptor {
 	constructor(
 		private readonly als: AsyncLocalStorage<RequestContext>,
-		// private readonly permissionsService: PermissionsCheckerService
+		private readonly permissionsService: PermissionsCheckerService
 	) {}
 	async intercept(
 		context: ExecutionContext,
@@ -44,10 +45,10 @@ export class PermissionInterceptor implements NestInterceptor {
 			} else {
 				try {
 					const userId = this.als.getStore()["currentUser"]?.loginId;
-					// authorized = await this.permissionsService.execute(
-					// 	userId,
-					// 	urlPermissions
-					// );
+					authorized = await this.permissionsService.execute(
+						userId,
+						urlPermissions
+					);
 				} catch (error) {
 					Logger.error("Authorize error", error);
 				}
