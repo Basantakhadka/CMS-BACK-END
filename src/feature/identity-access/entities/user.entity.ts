@@ -24,13 +24,13 @@ export class User implements DbEntity {
 	employeeId: string;
 
 	@JsonbColumn()
-	roles: SelectMenu[];
+	roles: any[];
 
 	@JsonbColumn()
 	createdBy: LabelValuePair;
 
 	@TextColumn()
-	createdOn: string;
+	createdOn: any;
 
 	@JsonbColumn()
 	lastModifiedBy: LabelValuePair;
@@ -69,7 +69,7 @@ export class User implements DbEntity {
 @Entity({ name: "cms_users_by_role" })
 export class UserByRole {
 	@PrimaryTextColumn("role_id")
-	roleId: string;
+	roleId: any;
 	@PrimaryTextColumn("user_id")
 	userId: string;
 }

@@ -6,7 +6,7 @@ import { SearchMeta } from "./search/search.meta";
 export interface BaseRepository<E extends DbEntity, ID> {
 	insert(entity: E): Promise<E>;
 
-	update(entity: E): Promise<E>;
+	update(entity: Partial<E>): Promise<E>;
 
 	delete(entity: E): Promise<void>;
 

@@ -43,7 +43,7 @@ export class UserLoginUsecase
 		private readonly userLoginService: UserLoginService
 	) { }
 
-	private async updateUserCredential(userCredential: UserCredential) {
+	private async updateUserCredential(userCredential: Partial<UserCredential>) {
 		await this.userCredentialRepository.update(userCredential);
 	}
 
@@ -53,7 +53,9 @@ export class UserLoginUsecase
 	}
 
 	private async validateUser(request: UserLoginUsecaseRequest) {
+		console.log({ request })
 		const user = await this.userRepository.findByUserId(request.username);
+		console.log({ user })
 		if (!user) {
 			Result.createErrorWithMessage(
 				new BadRequestException("Incorrect username or password"),
@@ -126,12 +128,6 @@ export class UserLoginUsecase
 			id: user.id,
 			unsuccessfulLoginAttempts: 0,
 			loginAttemptsTimer: null,
-			version: "",
-			password: "",
-			enforcePasswordChange: false,
-			expiryTime: "",
-			passwordHistory: [],
-			blocked: false
 		});
 	}
 
@@ -163,12 +159,7 @@ export class UserLoginUsecase
 			id: user.id,
 			unsuccessfulLoginAttempts: 0,
 			loginAttemptsTimer: null,
-			blocked: false,
-			version: "",
-			password: "",
-			enforcePasswordChange: false,
-			expiryTime: "",
-			passwordHistory: []
+			blocked: false
 		});
 		return true;
 	}
@@ -206,12 +197,6 @@ export class UserLoginUsecase
 				id: user.id,
 				unsuccessfulLoginAttempts,
 				loginAttemptsTimer: Date.now().toString(),
-				version: "",
-				password: "",
-				enforcePasswordChange: false,
-				expiryTime: "",
-				passwordHistory: [],
-				blocked: false
 			});
 			const attemptsLeft =
 				userLoginAttemptsLimit - unsuccessfulLoginAttempts + 1;
@@ -233,13 +218,6 @@ export class UserLoginUsecase
 		await this.updateUserCredential({
 			id: user.id,
 			blocked: true,
-			version: "",
-			password: "",
-			enforcePasswordChange: false,
-			expiryTime: "",
-			loginAttemptsTimer: "",
-			passwordHistory: [],
-			unsuccessfulLoginAttempts: 0
 		});
 	}
 
