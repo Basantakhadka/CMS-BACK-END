@@ -29,7 +29,7 @@ export class UpdateUserUsecase implements Usecase<UpdateUserUsecaseRequest, Upda
     async execute(request: UpdateUserUsecaseRequest, requestContext?: RequestContext): Promise<Result<UpdateUserUsecaseResponse>> {
         const loggedInUser = requestContext.getCurrentUser().loginId;
 
-        if (loggedInUser === request.id) Result.createError(new ForbiddenException("User cannot modify itself!"));
+        // if (loggedInUser === request.id) Result.createError(new ForbiddenException("User cannot modify itself!"));
         await this.validateSavedUser(request.id);
         await this.validateUserAttributeExists(request);
 
