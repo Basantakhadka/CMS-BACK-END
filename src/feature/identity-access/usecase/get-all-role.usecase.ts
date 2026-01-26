@@ -21,11 +21,13 @@ export class GetAllRoleUsecase implements Usecase<GetRoleUsecaseRequest, GetRole
     ) { }
     async execute(request?: GetRoleUsecaseRequest, requestContext?: RequestContext): Promise<Result<GetRoleUsecaseResponse>> {
         let pageInfo = request.data.pageInfo;
+        console.log({ request })
 
         if (pageInfo.current !== 1) {
             Result.createError(new BadRequestException("Invalid Request"));
         }
         const rolesListWithpageInfo = await this.rolesRepository.findAllRolesWithPagination(request.data, request.data.pageInfo);
+        console.log({ rolesListWithpageInfo })
         const rolesList = rolesListWithpageInfo.getElements();
         const rolesListResponse: RoleListReponse[] = [];
         rolesList.forEach((item) => {

@@ -36,11 +36,13 @@ export class DeleteRoleUsecase implements Usecase<DeleteRoleUsecaseRequest, Dele
                 }
             });
         }
-
-        const updateUserUsecase = new DeleteRoleUsecase(this.userRepository);
-
+        const role = new Role();
+        role.deleted = true;
+        role.id = request.roleId;
+        await this.userRepository.deleteUsersByRole(role.id);
+        await this.rolesRepository.save(role);
         const response = new DeleteRoleUsecaseResponse(request.roleId);
-        return Result.createSuccessWithMessage(response, "Role Delete Request Sent");
+        return Result.createSuccessWithMessage(response, "Role Deleted successfully");
     }
 
 
