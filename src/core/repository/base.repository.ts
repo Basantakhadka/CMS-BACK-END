@@ -28,4 +28,5 @@ export interface BaseRepository<E extends DbEntity, ID> {
 	findAll(): Promise<E[]>;
 
 	findTotalCount(): Promise<number>;
+
 }

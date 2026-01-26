@@ -7,6 +7,7 @@ import { UserCredential } from '@app/feature/identity-access/entities/user-crede
 type Entity<T extends ObjectLiteral> = new (...args: any[]) => T;
 
 export interface CustomRepository<T> extends Repository<T> {
+  findAll(arg0: { where: { title: string; }; }): import("../../feature/identity-access/entities/roles.entity").Role | PromiseLike<import("../../feature/identity-access/entities/roles.entity").Role>;
   schema: string;
 }
 
