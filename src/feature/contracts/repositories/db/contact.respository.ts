@@ -59,10 +59,10 @@ export class ContractDbRepository implements ContractRepository {
     }
     async findById(id: any): Promise<Contract> {
         await this.setRepository();
-        const savedUser = await this.repository.findOneBy({
+        const savedContract = await this.repository.findOneBy({
             id,
         });
-        return savedUser;
+        return savedContract;
     }
     findAllWithFilters(filters: SearchMeta): Promise<Contract[]> {
         throw new Error("Method not implemented.");

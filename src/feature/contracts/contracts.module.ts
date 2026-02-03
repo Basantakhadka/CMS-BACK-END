@@ -10,6 +10,7 @@ import { RolesDbRepository } from "../identity-access/repositories/db/roles.repo
 import { UpdateContractUsecase } from "./usecase/update-contract.usecase";
 import { DeleteContractUsecase } from "./usecase/delete-contract.usecase";
 import { GetContractsListUsecase } from "./usecase/get-contractList.usecase";
+import { GetOneContractUsecase } from "./usecase/get-one-contract.usecase";
 
 
 @Module({
@@ -23,7 +24,8 @@ import { GetContractsListUsecase } from "./usecase/get-contractList.usecase";
         RolesDbRepository,
         UpdateContractUsecase,
         DeleteContractUsecase,
-        GetContractsListUsecase
+        GetContractsListUsecase,
+        GetOneContractUsecase
 
 
 
