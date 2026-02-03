@@ -9,6 +9,6 @@ export class GetContractListResponseDto {
     jurisdiction?: string;     // Optional Jurisdiction
     renewalTerms?: string;     // Optional Renewal terms
     governingLaw: string;      // Governing law        // Active / Deleted
-    createdAt: string;         // Creation timestamp (ISO string)
-    updatedAt: string;         // Last update timestamp (ISO string)
+    createdAt: any;         // Creation timestamp (ISO string)
+    updatedAt: any;         // Last update timestamp (ISO string)
 }

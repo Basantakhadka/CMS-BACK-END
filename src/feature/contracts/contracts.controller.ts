@@ -26,6 +26,8 @@ import { DeleteContractUsecase } from "./usecase/delete-contract.usecase";
 import { FilterConditionsDto } from "@app/shared/dtos/filter-conditions.dto";
 import { GetContractListUsecaseRequest } from "./usecase/request/get-contractList.usecase.request";
 import { GetContractsListUsecase } from "./usecase/get-contractList.usecase";
+import { GetOneContractUsecaseRequest } from "./usecase/request/get-one-contract.usecase.request";
+import { GetOneContractUsecase } from "./usecase/get-one-contract.usecase";
 
 
 
@@ -37,6 +39,7 @@ export class ContractsController {
         private readonly addContractUsecase: AddContractUsecase,
         private readonly deleteContractUsecase:DeleteContractUsecase,
         private readonly getContractListUsecase:GetContractsListUsecase,
+        private readonly getOneContractUsecase:GetOneContractUsecase,
         private readonly updateContractUsecase: UpdateContractUsecase,
 
         private readonly als: AsyncLocalStorage<RequestContext>
@@ -70,11 +73,11 @@ export class ContractsController {
         return await this.getContractListUsecase.execute(request);
     }
 
-    // @Get("users/:id")
-    // async getOneUser(@Param("id") id: string) {
-    //     const request = new GetOneUserUsecaseRequest(id);
-    //     return await this.getOneUserUsecase.execute(request);
-    // }
+    @Get("/:id")
+    async getOneContract(@Param("id") id: string) {
+        const request = new GetOneContractUsecaseRequest(id);
+        return await this.getOneContractUsecase.execute(request);
+    }
 
     @Put("/:id")
     async updateContract(@Param("id") id: string, @Body() body: UpdateContractDto) {
