@@ -12,8 +12,8 @@ export class UpdateContractAlertDto {
   enableCustom?: boolean;
 
   @IsOptional()
-  @IsNumber()
-  reminderInterval?: number; // Interval in days for custom reminders
+  @IsString()
+  reminderInterval?: string; // Interval in days for custom reminders
 
   @IsOptional()
   @IsArray()
@@ -21,9 +21,8 @@ export class UpdateContractAlertDto {
   communicationChannels?: string[]; // e.g., ["email", "sms"]
 
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  stakeholders?: string[]; // List of stakeholder IDs or emails
+  @IsString()
+  stakeholders?:string; // List of stakeholder IDs or emails
 
   @IsOptional()
   @IsBoolean()

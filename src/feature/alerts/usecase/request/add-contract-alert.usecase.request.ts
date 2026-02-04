@@ -4,8 +4,8 @@ export class AddContractAlertUsecaseRequest {
         public readonly contractId: string,
         public readonly triggerExpiry?: boolean,
         public readonly enableCustom?: boolean,
-        public readonly reminderInterval?: number,
+        public readonly reminderInterval?: string,
         public readonly communicationChannels?: string[],
-        public readonly stakeholders?: string[],
+        public readonly stakeholders?: string,
     ) {}
 }
