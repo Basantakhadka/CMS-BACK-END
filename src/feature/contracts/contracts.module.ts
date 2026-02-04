@@ -11,6 +11,7 @@ import { UpdateContractUsecase } from "./usecase/update-contract.usecase";
 import { DeleteContractUsecase } from "./usecase/delete-contract.usecase";
 import { GetContractsListUsecase } from "./usecase/get-contractList.usecase";
 import { GetOneContractUsecase } from "./usecase/get-one-contract.usecase";
+import {  GetContractsForSelectMenuUsecase } from "./usecase/get-contract-dropdown.usecase";
 
 
 @Module({
@@ -25,7 +26,8 @@ import { GetOneContractUsecase } from "./usecase/get-one-contract.usecase";
         UpdateContractUsecase,
         DeleteContractUsecase,
         GetContractsListUsecase,
-        GetOneContractUsecase
+        GetOneContractUsecase,
+        GetContractsForSelectMenuUsecase
 
 
 

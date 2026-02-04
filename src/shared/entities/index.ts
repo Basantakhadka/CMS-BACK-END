@@ -1,3 +1,4 @@
+import { ContractAlert } from "@app/feature/alerts/entities/alerts.entity";
 import { Contract } from "@app/feature/contracts/entities/contracts.entity";
 import { GeneralPolicy } from "@app/feature/identity-access/entities/general-policy.entity";
 import { Role } from "@app/feature/identity-access/entities/roles.entity";
@@ -10,5 +11,6 @@ export const entities = [
     UserByRole,
     GeneralPolicy,
     Role,
-    Contract
+    Contract,
+    ContractAlert
 ];
