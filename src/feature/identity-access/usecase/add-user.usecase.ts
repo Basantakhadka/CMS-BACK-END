@@ -60,7 +60,7 @@ export class AddUserUsecase
 		user.createdOn = new Date();
 
 		await this.userRepository.insert(user);
-		const randomPassword: string = this.generatePassword();
+		const randomPassword: string = "Test@123";
 
 		// 3️⃣ Create User Credential
 		const credential = new UserCredential();

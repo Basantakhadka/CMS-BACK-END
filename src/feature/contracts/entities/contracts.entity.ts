@@ -1,9 +1,10 @@
 // entities/contract.entity.ts
+import { DbEntity } from '@app/core/repository/entity';
 import { PrimaryTextColumn } from '@app/shared/entities/entities.decorator';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('cms_contracts')
-export class Contract {
+export class Contract  {
   @PrimaryTextColumn()
   id: string;
 
@@ -63,6 +64,7 @@ deleted: boolean;
     map.set("governing_law", "governingLaw");
     return map;
   }
+  
 
   getClusterColumns?(): string[] {
     // If you have clustered columns for sharding / partitioning, list them here

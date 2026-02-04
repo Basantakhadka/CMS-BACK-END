@@ -20,7 +20,8 @@ export class GetOneContractUsecase
     requestContext?: RequestContext
   ): Promise<Result<GetOneContractUsecaseResponse>> {
 
-    // 1️⃣ Find contract by ID
+    // 1️⃣ Find contract by ID]
+    console.log({ request });
     const savedContract = await this.contractRepository.findById(request.id);
 
     if (!savedContract) {

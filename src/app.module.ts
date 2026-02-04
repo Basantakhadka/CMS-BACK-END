@@ -19,6 +19,7 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
 import { entities } from "./shared/entities";
 import { IdentityAndAccessModule } from "./feature/identity-access/identity-access.module";
 import { contracts } from "./feature/contracts/contracts.module";
+import { alerts } from "./feature/alerts/alerts.module";
 
 @Module({
 	imports: [
@@ -30,6 +31,7 @@ import { contracts } from "./feature/contracts/contracts.module";
 		AuthModule,
 		IdentityAndAccessModule,
 		contracts,
+		alerts,
 		CustomCacheModule,
 		EventEmitterModule.forRoot()
 	],

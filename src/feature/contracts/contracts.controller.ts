@@ -28,6 +28,7 @@ import { GetContractListUsecaseRequest } from "./usecase/request/get-contractLis
 import { GetContractsListUsecase } from "./usecase/get-contractList.usecase";
 import { GetOneContractUsecaseRequest } from "./usecase/request/get-one-contract.usecase.request";
 import { GetOneContractUsecase } from "./usecase/get-one-contract.usecase";
+import {  GetContractsForSelectMenuUsecase } from "./usecase/get-contract-dropdown.usecase";
 
 
 
@@ -41,6 +42,7 @@ export class ContractsController {
         private readonly getContractListUsecase:GetContractsListUsecase,
         private readonly getOneContractUsecase:GetOneContractUsecase,
         private readonly updateContractUsecase: UpdateContractUsecase,
+        private readonly getContractDropdownUsecase: GetContractsForSelectMenuUsecase,
 
         private readonly als: AsyncLocalStorage<RequestContext>
     ) { }
@@ -104,15 +106,10 @@ export class ContractsController {
         return await this.deleteContractUsecase.execute(request, this.als.getStore());
     }
 
-    // @Post("role-users-select-menu/:id")
-    // async getUsersByRoleForSelectMenu(@Param("id") id: string) {
-    //     try {
-    //         const request = new GetUsersByRoleUsecaseRequest(id);
-    //         return await this.getUsersByRoleUsecase.execute(request);
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
+    @Get("/dropdown/list")
+    async getDropdown() {
+        return this.getContractDropdownUsecase.execute();
+    }
 
 
 }
