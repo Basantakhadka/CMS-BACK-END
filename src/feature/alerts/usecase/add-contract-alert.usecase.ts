@@ -32,7 +32,7 @@ export class AddContractAlertUsecase
     // 2️⃣ Create ContractAlert entity
     const alert = new ContractAlert();
     alert.id = alertId;
-    alert.contract = { id: request.contractId } as any; // set relation by ID only
+    alert.contract_id = request.contractId;
     alert.trigger_expiry = request.triggerExpiry ?? false;
     alert.enable_custom = request.enableCustom ?? false;
     alert.reminder_interval = request.reminderInterval;

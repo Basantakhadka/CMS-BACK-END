@@ -28,7 +28,7 @@ import { UpdateContractAlertUsecaseRequest } from "./usecase/request/update-cont
 import { DeleteContractAlertUsecaseRequest } from "./usecase/request/delete-contract-alert.usecase.request";
 
 @ApiTags("Contract Alerts")
-@Controller("contract-alerts")
+@Controller("alerts")
 @UseInterceptors(PermissionInterceptor)
 export class ContractAlertsController {
     constructor(

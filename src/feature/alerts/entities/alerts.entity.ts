@@ -8,7 +8,13 @@ export class ContractAlert {
   @PrimaryTextColumn()
   id: string;
 
-  @ManyToOne(() => Contract)
+ // 🔗 Relation with contracts
+  @Column({ type: 'text' })
+  contract_id: string;
+
+  @ManyToOne(() => Contract, contract => contract, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'contract_id' })
   contract: Contract;
 
@@ -18,13 +24,13 @@ export class ContractAlert {
   @Column({ type: 'boolean', default: false })
   enable_custom: boolean;
 
-  @Column({ type: 'integer', nullable: true })
-  reminder_interval?: number;
+  @Column({ type: 'text', nullable: true })
+  reminder_interval?: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'json', nullable: true })
   communication_channels?: any;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'text', nullable: true })
   stakeholders?: any;
 
   @CreateDateColumn()
@@ -43,7 +49,7 @@ export class ContractAlert {
   getColumns?(): Map<string, string> {
     const map = new Map<string, string>();
     map.set('id', 'id');
-    map.set('contract', 'contractId'); // store relation as contractId in DTO
+    map.set('contract_id', 'contractId'); // store relation as contractId in DTO
     map.set('trigger_expiry', 'triggerExpiry');
     map.set('enable_custom', 'enableCustom');
     map.set('reminder_interval', 'reminderInterval');

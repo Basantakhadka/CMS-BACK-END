@@ -5,6 +5,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 
 @Entity('cms_contracts')
 export class Contract  {
+  [x: string]: any;
   @PrimaryTextColumn()
   id: string;
 

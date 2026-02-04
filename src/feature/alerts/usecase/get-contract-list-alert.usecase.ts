@@ -49,7 +49,7 @@ export class GetContractAlertsListUsecase
     elements.forEach((alert) => {
       const dto = new GetContractAlertResponseDto();
       dto.id = alert.id;
-      dto.contractId = alert.contract?.id;
+      dto.contractId = alert.contract_id;
       dto.triggerExpiry = alert.trigger_expiry;
       dto.enableCustom = alert.enable_custom;
       dto.reminderInterval = alert.reminder_interval;

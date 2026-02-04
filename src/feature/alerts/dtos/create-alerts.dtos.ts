@@ -15,14 +15,14 @@ export class CreateContractAlertDto {
   enableCustom?: boolean = false; // Default to false
 
   @IsOptional()
-  @IsNumber()
-  reminderInterval?: number; // Optional interval in days for custom reminders
+  @IsString()
+  reminderInterval?: string; // Optional interval in days for custom reminders
 
   @IsOptional()
   @IsArray()
   communicationChannels?: string[]; // e.g., ["email", "sms"]
 
   @IsOptional()
-  @IsArray()
-  stakeholders?: string[]; // List of stakeholder IDs or emails
+  @IsString()
+  stakeholders?: string; // List of stakeholder IDs or emails
 }
