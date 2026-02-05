@@ -21,7 +21,7 @@ import { Contract } from "@app/feature/contracts/entities/contracts.entity";
 
 @Injectable()
 export class ContractAlertsDbRepository implements ContractAlertsRepository {
-    constructor (private dataSourceService: DatasourceService) { }
+    constructor(private dataSourceService: DatasourceService) { }
     async findByAlertsId(alertsId: string): Promise<ContractAlert> {
         await this.setRepository();
         return this.repository.findOneBy({ id: alertsId });
@@ -87,15 +87,15 @@ export class ContractAlertsDbRepository implements ContractAlertsRepository {
 
     async findTotalCount(): Promise<number> {
         await this.setRepository();
-        const query = `SELECT count(id) as total FROM ${ this.repository.schema
-            }.${ ContractAlert.getTableName() } WHERE deleted = false`;
+        const query = `SELECT count(id) as total FROM ${this.repository.schema
+            }.${ContractAlert.getTableName()} WHERE deleted = false`;
         const total = await this.repository.query(query);
         return parseInt(total[0]?.total || 0);
     }
     async findAllLabelValuePairByIds(list: string[]): Promise<LabelValuePair[]> {
         await this.setRepository();
-        const query = `SELECT id as value, user_name as "userName",employee_id as "employeeId" from ${ this.repository.schema
-            }.${ ContractAlert.getTableName() } where id in ( ${ list.map((id) => `'${ id }'`) } )`;
+        const query = `SELECT id as value, user_name as "userName",employee_id as "employeeId" from ${this.repository.schema
+            }.${ContractAlert.getTableName()} where id in ( ${list.map((id) => `'${id}'`)} )`;
         const usersList = await this.repository.query(query);
         return usersList?.map(
             (data) =>
@@ -120,5 +120,47 @@ export class ContractAlertsDbRepository implements ContractAlertsRepository {
         return page;
     }
 
-    
+async findActiveExpiryAlertsWithContract(): Promise<
+  {
+    alertId: string;
+    reminderInterval: number;
+    contractId: string;
+    expiryDate: Date;
+    title: string;
+    stakeholders: string[]; // if you store them as array in DB
+  }[]
+> {
+  await this.setRepository();
+
+  const alertTable = ContractAlert.getTableName(); // e.g., cms_contract_alerts
+  const contractTable = Contract.getTableName();   // e.g., cms_contracts
+  const schema = this.repository.schema || 'public'; // your schema
+
+  // Raw SQL query
+  const query = `
+    SELECT 
+      a.id AS "alertId",
+      a.reminder_interval AS "reminderInterval",
+      a.stakeholders AS "stakeholders",
+      c.id AS "contractId",
+      c.contract_title AS "title",
+      c.expiry_date AS "expiryDate"
+    FROM ${schema}."${alertTable}" a
+    INNER JOIN ${schema}."${contractTable}" c
+      ON c.id = a.contract_id
+      AND c.deleted = false
+    WHERE a.deleted = false
+      AND a.trigger_expiry = true
+  `;
+
+  const results = await this.repository.query(query);
+
+  return results;
+}
+
+
+
+
+
+
 }

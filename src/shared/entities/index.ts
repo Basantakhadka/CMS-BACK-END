@@ -4,6 +4,7 @@ import { GeneralPolicy } from "@app/feature/identity-access/entities/general-pol
 import { Role } from "@app/feature/identity-access/entities/roles.entity";
 import { UserCredential } from "@app/feature/identity-access/entities/user-credential.entity";
 import { User, UserByRole } from "@app/feature/identity-access/entities/user.entity";
+import { SettingsNotificationsByType } from "@app/feature/notification/entities/setting-notification.entity";
 
 export const entities = [
     User,
@@ -12,5 +13,6 @@ export const entities = [
     GeneralPolicy,
     Role,
     Contract,
-    ContractAlert
+    ContractAlert,
+    SettingsNotificationsByType
 ];

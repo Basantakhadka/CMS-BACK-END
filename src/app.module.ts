@@ -20,6 +20,8 @@ import { entities } from "./shared/entities";
 import { IdentityAndAccessModule } from "./feature/identity-access/identity-access.module";
 import { contracts } from "./feature/contracts/contracts.module";
 import { alerts } from "./feature/alerts/alerts.module";
+import { ScheduleModule } from '@nestjs/schedule';
+import { NotificationModule } from "./feature/notification/notification.module";
 
 @Module({
 	imports: [
@@ -33,7 +35,9 @@ import { alerts } from "./feature/alerts/alerts.module";
 		contracts,
 		alerts,
 		CustomCacheModule,
-		EventEmitterModule.forRoot()
+		NotificationModule,
+		EventEmitterModule.forRoot(),
+		ScheduleModule.forRoot()
 	],
 	controllers: [AppController],
 	providers: [AppService, JwtStrategy, TokenIntegrityValidator],

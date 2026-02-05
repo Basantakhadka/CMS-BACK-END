@@ -10,11 +10,19 @@ import { ContractAlertsDbRepository } from "./repositories/db/alerts.repository"
 import { PermissionsCheckerService } from "../auth/services/permissions-checker.service";
 import { UserDbRepository } from "../identity-access/repositories/db/user.repository";
 import { RolesDbRepository } from "../identity-access/repositories/db/roles.repository";
+import { ContractDbRepository } from "../contracts/repositories/db/contact.respository";
+import { ContractExpiryCronUsecase } from "./usecase/contract-expiry.cron.usecase";
+import { EmailService } from "../notification/notification.service";
+import { SettingsNotificationsByType } from "../notification/entities/setting-notification.entity";
+import { SettingsNotificationDbRepository } from "../notification/repository/db/setting-notification.repository";
+import { ConfigService } from "@nestjs/config";
+import { ScheduleModule } from "@nestjs/schedule";
+import { NotificationModule } from "../notification/notification.module";
 
 
 
 @Module({
-    imports: [],
+    imports: [NotificationModule],
     controllers: [ContractAlertsController],
     providers: [
        GetContractAlertsListUsecase,
@@ -25,7 +33,9 @@ import { RolesDbRepository } from "../identity-access/repositories/db/roles.repo
        ContractAlertsDbRepository,
        PermissionsCheckerService,
        UserDbRepository,
-       RolesDbRepository
+       RolesDbRepository,
+       ContractDbRepository,
+       ContractExpiryCronUsecase,
     ],
     exports: [],
 })
