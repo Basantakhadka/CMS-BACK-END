@@ -41,6 +41,11 @@ export class AddUserUsecase
 
 		const loggedInUser = requestContext.getCurrentUser().loginId;
 		const user = await this.userRepository.findById(loggedInUser);
+		if(user.userId ===loggedInUser){
+			throw new NotAcceptableException(
+				`user already exists with the same user id ${ request.userId }`,
+			);
+		}
 
 		// 1️⃣ Validate duplicates
 		await this.validateUserAttributeExists(request);
@@ -49,23 +54,23 @@ export class AddUserUsecase
 		const userId = IdGenerator.generateId("v4");
 
 		const users = new User();
-		user.id = userId;
-		user.userId = request.userId;
-		user.userName = request.userName;
-		user.employeeId = request.employeeId;
-		user.roles = request.roles;
-		user.active = true;
-		user.deleted = false;
-		user.createdBy = { label: "SYSTEM", value: loggedInUser };
-		user.createdOn = new Date();
+		users.id = userId;
+		users.userId = request.userId;
+		users.userName = request.userName;
+		users.employeeId = request.employeeId;
+		users.roles = request.roles;
+		users.active = true;
+		users.deleted = false;
+		users.createdBy = { label: "SYSTEM", value: loggedInUser };
+		users.createdOn = new Date();
 
-		await this.userRepository.insert(user);
+		await this.userRepository.insert(users);
 		const randomPassword: string = "Test@123";
 
 		// 3️⃣ Create User Credential
 		const credential = new UserCredential();
 		credential.id = userId; // 🔑 SAME ID (important)
-		credential.password = await hashPassword(randomPassword, user.id, user.userId);
+		credential.password = await hashPassword(randomPassword, users.id, users.userId);
 		version: IdGenerator.generateId("4"),
 			credential.enforcePasswordChange = true;
 		credential.unsuccessfulLoginAttempts = 0;
@@ -78,11 +83,13 @@ export class AddUserUsecase
 
 		await this.userCredentialRepository.insert(credential);
 
+		console.log({users})
+
 		// 4️⃣ Assign roles
-		user.roles.forEach(async (role) => {
+		users?.roles?.forEach(async (role) => {
 			const userByRole = new UserByRole();
 			userByRole.roleId = role.value;
-			userByRole.userId = user.id;
+			userByRole.userId = users.id;
 			await this.userRepository.insertUserByRole(userByRole);
 		});
 

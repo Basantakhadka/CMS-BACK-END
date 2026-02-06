@@ -7,4 +7,5 @@ export class GetUserListResponseDto {
     userId: string;
     createdOn: string;
     status: string;
+    roles:any;
 }
