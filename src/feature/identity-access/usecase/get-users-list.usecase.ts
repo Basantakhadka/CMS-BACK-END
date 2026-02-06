@@ -43,6 +43,7 @@ export class GetUsersListUsecase
 				users.userName = user.userName;
 				users.employeeId = user.employeeId;
 				users.userId = user.userId;
+				users.roles = user.roles;
 
 				users.createdOn = user.createdOn
 					? DateUtils.formatDateTime(

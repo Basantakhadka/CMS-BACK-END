@@ -18,7 +18,7 @@ export const corsOptions: CorsOptions = {
 		"http://172.16.16.201:3000/",
 		"http://192.168.1.83:3001/",
 		"http://192.168.1.96:3001/",
-		"http://localhost:5174"
+		"http://localhost:5173"
 	],
 	methods: ["GET", "POST", "PUT", "OPTIONS", "DELETE"],
 	exposedHeaders: ["X-XSRF-TOKEN"],
