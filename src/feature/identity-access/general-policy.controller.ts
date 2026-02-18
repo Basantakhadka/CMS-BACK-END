@@ -14,7 +14,7 @@ import { ApiTags } from "@nestjs/swagger";
 @UseInterceptors(PermissionInterceptor)
 export class GeneralPolicyController {
 	requestContext: RequestContext;
-	constructor (
+	constructor(
 		private readonly saveGeneralPolicyUsecase: SaveGeneralPolicyUsecase,
 		private readonly getGeneralPolicyUsecase: GetGeneralPolicyUsecase
 	) { }
@@ -29,14 +29,15 @@ export class GeneralPolicyController {
 	async saveGeneralPolicy(@Body() body: CreateGeneralPolicyDto) {
 		const generalPolicy: CreateGeneralPolicyDto = body;
 		const request = new SaveGeneralPolicyUsecaseRequest(
-			generalPolicy.active,
-			generalPolicy.usersMfa,
-			generalPolicy.merchantsMfa,
-			generalPolicy.passwordPolicy,
-			generalPolicy.usersOtpSetting,
-			generalPolicy.merchantsOtpSetting,
-			generalPolicy.merchantSignupOtpSetting
+			null,                          // active
+			null,                          // usersMfa
+			null,                          // merchantsMfa
+			generalPolicy.passwordPolicy,  // keep this
+			null,                          // usersOtpSetting
+			null,                          // merchantsOtpSetting
+			null                           // merchantSignupOtpSetting
 		);
+
 		return await this.saveGeneralPolicyUsecase.execute(request);
 	}
 }

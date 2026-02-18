@@ -1,7 +1,7 @@
 import { RequestContext } from "@app/core/middleware/request_context";
 import { Usecase } from "@app/core/usecase/usecase";
 import { Result } from "@app/feature/common/result";
-import { NotFoundException } from "@nestjs/common";
+import { Inject, NotFoundException } from "@nestjs/common";
 
 import { Contract } from "../entities/contracts.entity";
 import { ContractRepository } from "../repositories/contract.repository";
@@ -14,6 +14,7 @@ export class DeleteContractUsecase
   implements Usecase<DeleteContractUsecaseRequest, DeleteContractUsecaseResponse>
 {
   constructor(
+      @Inject(ContractDbRepository)
     private readonly contractRepository: ContractRepository
   ) {}
 

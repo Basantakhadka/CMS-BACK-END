@@ -8,7 +8,7 @@ export class UpdateContractAlertUsecaseRequest {
         public readonly enableCustom?: boolean,
         public readonly reminderInterval?: string,
         public readonly communicationChannels?: string[],
-        public readonly stakeholders?: string,
+        public readonly stakeholders?: string[],
         public readonly deleted?: boolean,
     ) {}
 }

@@ -27,7 +27,6 @@ export class GetAllRoleUsecase implements Usecase<GetRoleUsecaseRequest, GetRole
             Result.createError(new BadRequestException("Invalid Request"));
         }
         const rolesListWithpageInfo = await this.rolesRepository.findAllRolesWithPagination(request.data, request.data.pageInfo);
-        console.log({ rolesListWithpageInfo })
         const rolesList = rolesListWithpageInfo.getElements();
         const rolesListResponse: RoleListReponse[] = [];
         rolesList.forEach((item) => {

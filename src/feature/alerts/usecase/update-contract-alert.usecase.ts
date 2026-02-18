@@ -33,7 +33,13 @@ export class UpdateContractAlertUsecase
     existingAlert.enable_custom = request.enableCustom ?? existingAlert.enable_custom;
     existingAlert.reminder_interval = request.reminderInterval ?? existingAlert.reminder_interval;
     existingAlert.communication_channels = request.communicationChannels ?? existingAlert.communication_channels;
-    existingAlert.stakeholders = request.stakeholders ?? existingAlert.stakeholders;
+    existingAlert.stakeholders = (
+      request.stakeholders
+        ? Array.isArray(request.stakeholders)
+          ? request.stakeholders
+          : [request.stakeholders]
+        : existingAlert.stakeholders
+    );
     existingAlert.deleted = request.deleted ?? existingAlert.deleted;
 
     // Audit field

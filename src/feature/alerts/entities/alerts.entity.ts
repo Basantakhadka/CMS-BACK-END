@@ -30,8 +30,9 @@ export class ContractAlert {
   @Column({ type: 'json', nullable: true })
   communication_channels?: any;
 
-  @Column({ type: 'text', nullable: true })
-  stakeholders?: any;
+ @Column({ type: 'jsonb', nullable: true })
+stakeholders?: string[];
+
 
   @CreateDateColumn()
   created_at: Date;
