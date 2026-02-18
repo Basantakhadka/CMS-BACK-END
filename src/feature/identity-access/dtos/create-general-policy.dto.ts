@@ -164,14 +164,12 @@ export class PasswordPolicy {
 }
 
 export class CreateGeneralPolicyDto {
-  @IsNotEmpty()
-  active: boolean;
+  active?: boolean;
   @ValidateNested()
-  @IsNotEmpty()
   @Type(() => MultiFactorAuthentication)
-  usersMfa: MultiFactorAuthentication;
+  usersMfa?: MultiFactorAuthentication;
   @Type(() => MultiFactorAuthentication)
-  merchantsMfa: MultiFactorAuthentication;
+  merchantsMfa?: MultiFactorAuthentication;
   @ValidateNested()
   @IsNotEmpty()
   @Type(() => PasswordPolicy)
@@ -179,13 +177,12 @@ export class CreateGeneralPolicyDto {
   @ValidateNested()
   @IsOptional()
   @Type(() => OTPSetting)
-  merchantsOtpSetting: OTPSetting;
+  merchantsOtpSetting?: OTPSetting;
   @IsOptional()
   @ValidateNested()
   @Type(() => OTPSetting)
   usersOtpSetting: OTPSetting;
   @ValidateNested()
-  @IsNotEmpty()
   @Type(() => OTPSetting)
-  merchantSignupOtpSetting: OTPSetting;
+  merchantSignupOtpSetting?: OTPSetting;
 }

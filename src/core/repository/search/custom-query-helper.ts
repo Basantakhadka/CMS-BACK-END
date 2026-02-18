@@ -96,7 +96,7 @@ export class CustomQueryHelper {
 		lastRow: any,
 		requestPageInfo: PageInfo
 	): PageInfo {
-		const currentPage = requestPageInfo.current + 1;
+		const currentPage = requestPageInfo.current;
 		const pageSize = requestPageInfo.size;
 		const pginfo = new PageInfo(
 			currentPage,

@@ -23,6 +23,7 @@ export class CreateContractAlertDto {
   communicationChannels?: string[]; // e.g., ["email", "sms"]
 
   @IsOptional()
-  @IsString()
-  stakeholders?: string; // List of stakeholder IDs or emails
+  @IsArray()
+  @IsString({ each: true })
+  stakeholders?: string[]; // List of stakeholder IDs or emails
 }

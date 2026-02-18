@@ -91,78 +91,78 @@ export class UserLoginUsecase
 		return { user, userCredential };
 	}
 
-	private async validatePasswordExpiry(
-		userCredential: UserCredential,
-		passwordPolicy: PasswordPolicy
-	) {
-		if (!passwordPolicy.passwordExpiry.neverExpires) {
-			const expiryTime = userCredential.expiryTime;
-			const currentTimestamp = Date.now();
-			if (expiryTime && +currentTimestamp > +expiryTime) {
-				Result.createErrorWithMessage(
-					new ForbiddenException(
-						"Your password has expired. Please set new password."
-					),
-					"PASSWORD_EXPIRED"
-				);
-			}
-		}
-	}
-	private async validateSuccessfulLoginAttempts(
-		user: User,
-		userCredential: UserCredential
-	) {
-		const canAccess = await this.validateAndResetFailedLoginAttempts(
-			user,
-			userCredential
-		);
-		if (!canAccess) {
+	// private async validatePasswordExpiry(
+	// 	userCredential: UserCredential,
+	// 	passwordPolicy: PasswordPolicy
+	// ) {
+	// 	if (!passwordPolicy.passwordExpiry.neverExpires) {
+	// 		const expiryTime = userCredential.expiryTime;
+	// 		const currentTimestamp = Date.now();
+	// 		if (expiryTime && +currentTimestamp > +expiryTime) {
+	// 			Result.createErrorWithMessage(
+	// 				new ForbiddenException(
+	// 					"Your password has expired. Please set new password."
+	// 				),
+	// 				"PASSWORD_EXPIRED"
+	// 			);
+	// 		}
+	// 	}
+	// }
+	// private async validateSuccessfulLoginAttempts(
+	// 	user: User,
+	// 	userCredential: UserCredential
+	// ) {
+	// 	const canAccess = await this.validateAndResetFailedLoginAttempts(
+	// 		user,
+	// 		userCredential
+	// 	);
+	// 	if (!canAccess) {
 
-			Result.createError(
-				new BadRequestException(
-					"Your account is locked. Please contact admin support."
-				)
-			);
-		}
-		await this.updateUserCredential({
-			id: user.id,
-			unsuccessfulLoginAttempts: 0,
-			loginAttemptsTimer: null,
-		});
-	}
+	// 		Result.createError(
+	// 			new BadRequestException(
+	// 				"Your account is locked. Please contact admin support."
+	// 			)
+	// 		);
+	// 	}
+	// 	await this.updateUserCredential({
+	// 		id: user.id,
+	// 		unsuccessfulLoginAttempts: 0,
+	// 		loginAttemptsTimer: null,
+	// 	});
+	// }
 
-	private async validateAndResetFailedLoginAttempts(
-		user: User,
-		userCredential: UserCredential
-	) {
-		const passwordPolicy = await this.getPasswordPolicy();
-		const wrongPasswordCountBasis =
-			passwordPolicy.failedLoginAttempts.lockUserCount;
-		const currentTimestampInHours = Date.now() / 3600000;
-		if (!userCredential.loginAttemptsTimer) {
-			return !userCredential.blocked;
-		}
-		const userLoginAttemptsTimestampInHours =
-			+userCredential.loginAttemptsTimer / 3600000;
-		const resetLoginAttemptsDurationInHours = 24;
-		const shouldResetLoginAttempts =
-			currentTimestampInHours - userLoginAttemptsTimestampInHours >
-			resetLoginAttemptsDurationInHours;
-		if (
-			!passwordPolicy?.failedLoginAttempts?.active ||
-			wrongPasswordCountBasis === "cumulative" ||
-			!shouldResetLoginAttempts
-		) {
-			return !userCredential.blocked;
-		}
-		await this.userCredentialRepository.update({
-			id: user.id,
-			unsuccessfulLoginAttempts: 0,
-			loginAttemptsTimer: null,
-			blocked: false
-		});
-		return true;
-	}
+	// private async validateAndResetFailedLoginAttempts(
+	// 	user: User,
+	// 	userCredential: UserCredential
+	// ) {
+	// 	const passwordPolicy = await this.getPasswordPolicy();
+	// 	const wrongPasswordCountBasis =
+	// 		passwordPolicy.failedLoginAttempts.lockUserCount;
+	// 	const currentTimestampInHours = Date.now() / 3600000;
+	// 	if (!userCredential.loginAttemptsTimer) {
+	// 		return !userCredential.blocked;
+	// 	}
+	// 	const userLoginAttemptsTimestampInHours =
+	// 		+userCredential.loginAttemptsTimer / 3600000;
+	// 	const resetLoginAttemptsDurationInHours = 24;
+	// 	const shouldResetLoginAttempts =
+	// 		currentTimestampInHours - userLoginAttemptsTimestampInHours >
+	// 		resetLoginAttemptsDurationInHours;
+	// 	if (
+	// 		!passwordPolicy?.failedLoginAttempts?.active ||
+	// 		wrongPasswordCountBasis === "cumulative" ||
+	// 		!shouldResetLoginAttempts
+	// 	) {
+	// 		return !userCredential.blocked;
+	// 	}
+	// 	await this.userCredentialRepository.update({
+	// 		id: user.id,
+	// 		unsuccessfulLoginAttempts: 0,
+	// 		loginAttemptsTimer: null,
+	// 		blocked: false
+	// 	});
+	// 	return true;
+	// }
 
 	private async handleIncorrectLoginAttempts(
 		passwordPolicy: PasswordPolicy,
@@ -172,7 +172,7 @@ export class UserLoginUsecase
 		const enabledUnsuccessfulAttempts =
 			passwordPolicy.failedLoginAttempts.active;
 		const userLoginAttemptsLimit = +passwordPolicy.failedLoginAttempts.limits;
-		await this.validateAndResetFailedLoginAttempts(user, userCredential);
+		// await this.validateAndResetFailedLoginAttempts(user, userCredential);
 		const updatedUserCredential = await this.userCredentialRepository.findById(
 			user.id
 		);
@@ -234,8 +234,8 @@ export class UserLoginUsecase
 				userCredential
 			);
 		}
-		await this.validateSuccessfulLoginAttempts(user, userCredential);
-		await this.validatePasswordExpiry(userCredential, passwordPolicy);
+		// await this.validateSuccessfulLoginAttempts(user, userCredential);
+		// await this.validatePasswordExpiry(userCredential, passwordPolicy);
 	}
 
 	private async validatePassword(

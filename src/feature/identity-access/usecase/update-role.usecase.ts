@@ -21,9 +21,9 @@ export class UpdateRoleUsecase implements Usecase<UpdateRoleUsecaseRequest, Upda
         const loggedInUser = requestContext.getCurrentUser().loginId;
         const user = await this.userRepository.findById(loggedInUser);
 
-        user.roles.forEach((item) => {
-            if (item.value === request.id) Result.createError(new ForbiddenException("User cannot modify its role!"));
-        })
+        // user.roles.forEach((item) => {
+        //     if (item.value === request.id) Result.createError(new ForbiddenException("User cannot modify its role!"));
+        // })
         let savedData: Role;
         await this.rolesRepository.findById(request.id).then((data) => savedData = data);
         if (!savedData) {

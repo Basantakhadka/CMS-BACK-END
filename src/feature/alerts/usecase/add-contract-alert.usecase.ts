@@ -37,7 +37,7 @@ export class AddContractAlertUsecase
     alert.enable_custom = request.enableCustom ?? false;
     alert.reminder_interval = request.reminderInterval;
     alert.communication_channels = request.communicationChannels ?? [];
-    alert.stakeholders = request.stakeholders ?? [];
+    alert.stakeholders = Array.isArray(request.stakeholders) ? request.stakeholders : [];
 
     // Audit fields
     const loggedInUser = requestContext?.getCurrentUser()?.loginId || "SYSTEM";
@@ -45,7 +45,6 @@ export class AddContractAlertUsecase
     alert.updated_at = new Date();
     alert.deleted = false;
 
-    console.log({ alert });
 
     // 3️⃣ Save to DB
     await this.contractAlertRepository.insert(alert);

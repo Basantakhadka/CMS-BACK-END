@@ -3,6 +3,7 @@ import { PermissionPointEnumType } from "./permission-enum-type.constant";
 export class PermissionsConstant extends PermissionPointEnumType<PermissionsConstant> {
   public static readonly LOGIN = new PermissionsConstant('/auth/login', 'POST', []);
   public static readonly IDENTITY_ACCESS_ROLES_SELECT_MENU = new PermissionsConstant('/identity-access/roles-select-menu', 'POST', []);
+    public static readonly IDENTITY_ACCESS_USERS_DELETE = new PermissionsConstant('/identity-access/users/:id', 'DELETE', ['iam:users:delete']);
 
 
   private constructor(public readonly endpoint: string, public readonly method: string, public readonly permissions: Array<string>) {
@@ -15,6 +16,7 @@ export class PermissionsConstant extends PermissionPointEnumType<PermissionsCons
     return [
       this.LOGIN,
       this.IDENTITY_ACCESS_ROLES_SELECT_MENU,
+      this.IDENTITY_ACCESS_USERS_DELETE,
     ];
   }
 
