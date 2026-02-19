@@ -12,11 +12,16 @@ export class ContractAlert {
   @Column({ type: 'text' })
   contract_id: string;
 
+
+
+
   @ManyToOne(() => Contract, contract => contract, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'contract_id' })
   contract: Contract;
+  @Column({ select: false }) // Optional: computed column
+contract_title?: string;
 
   @Column({ type: 'boolean', default: false })
   trigger_expiry: boolean;
@@ -51,6 +56,7 @@ stakeholders?: string[];
     const map = new Map<string, string>();
     map.set('id', 'id');
     map.set('contract_id', 'contractId'); // store relation as contractId in DTO
+    map.set('contract_title', 'contract_title'); // store contract title as title in DTO
     map.set('trigger_expiry', 'triggerExpiry');
     map.set('enable_custom', 'enableCustom');
     map.set('reminder_interval', 'reminderInterval');

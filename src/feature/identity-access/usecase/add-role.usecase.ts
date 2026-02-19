@@ -49,6 +49,7 @@ export class AddRoleUsecase implements Usecase<AddRoleUsecaseRequest, AddRoleUse
         // 🔹 Create new role
         const role = new Role();
         role.id = IdGenerator.generateId();
+        role.deleted =false;
         role.title = request.title;
         role.permissions = request.permission;
         role.active = request.active;

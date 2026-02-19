@@ -13,7 +13,7 @@ import { GetContractAlertListUsecaseRequest } from "./request/get-contract-alert
 import { GetContractAlertListUsecaseResponse } from "./response/get-contract-alert-list.usecase.response";
 import { ContractAlertsDbRepository } from "../repositories/db/alerts.repository";
 import { ContractAlertsRepository } from "../repositories/alerts.repository";
-import { GetContractAlertResponseDto } from "../dtos/alerts-list.dtos";
+import { GetContractAlertListResponseDto, GetContractAlertResponseDto } from "../dtos/alerts-list.dtos";
 
 
 export class GetContractAlertsListUsecase
@@ -47,9 +47,10 @@ export class GetContractAlertsListUsecase
     const elements = alertsList.getElements();
 
     elements.forEach((alert) => {
-      const dto = new GetContractAlertResponseDto();
+      const dto = new GetContractAlertListResponseDto();
       dto.id = alert.id;
       dto.contractId = alert.contract_id;
+      dto.title = alert.contract_title || ''; // Assuming the Contract entity has a title property
       dto.triggerExpiry = alert.trigger_expiry;
       dto.enableCustom = alert.enable_custom;
       dto.reminderInterval = alert.reminder_interval;

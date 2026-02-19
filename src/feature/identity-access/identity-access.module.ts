@@ -24,10 +24,11 @@ import { RolesTotalCountUsecase } from "./usecase/roles-total-count.usecase";
 import { GetUsersByRoleUsecase } from "./usecase/get-users-by-role.usecase";
 import { AddUserUsecase } from "./usecase/add-user.usecase";
 import { PermissionsCheckerService } from "../auth/services/permissions-checker.service";
+import { EmailHandlerModule } from "@app/shared/mailer/mailer.module";
 
 
 @Module({
-	imports: [],
+	imports: [EmailHandlerModule],
 	controllers: [UsersController, GeneralPolicyController, RolesController],
 	providers: [
 
