@@ -1,4 +1,3 @@
-// entities/contract-alert.entity.ts
 import { Contract } from '@app/feature/contracts/entities/contracts.entity';
 import { PrimaryTextColumn } from '@app/shared/entities/entities.decorator';
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
@@ -8,20 +7,18 @@ export class ContractAlert {
   @PrimaryTextColumn()
   id: string;
 
- // 🔗 Relation with contracts
+  // 🔗 Relation with contracts
   @Column({ type: 'text' })
   contract_id: string;
-
-
-
 
   @ManyToOne(() => Contract, contract => contract, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'contract_id' })
   contract: Contract;
-  @Column({ select: false }) // Optional: computed column
-contract_title?: string;
+
+  // Optional, transient property (not persisted in DB)
+  contract_title?: string;
 
   @Column({ type: 'boolean', default: false })
   trigger_expiry: boolean;
@@ -35,9 +32,8 @@ contract_title?: string;
   @Column({ type: 'json', nullable: true })
   communication_channels?: any;
 
- @Column({ type: 'jsonb', nullable: true })
-stakeholders?: string[];
-
+  @Column({ type: 'jsonb', nullable: true })
+  stakeholders?: string[];
 
   @CreateDateColumn()
   created_at: Date;
@@ -56,7 +52,7 @@ stakeholders?: string[];
     const map = new Map<string, string>();
     map.set('id', 'id');
     map.set('contract_id', 'contractId'); // store relation as contractId in DTO
-    map.set('contract_title', 'contract_title'); // store contract title as title in DTO
+    map.set('contract_title', 'contract_title'); // transient, optional
     map.set('trigger_expiry', 'triggerExpiry');
     map.set('enable_custom', 'enableCustom');
     map.set('reminder_interval', 'reminderInterval');

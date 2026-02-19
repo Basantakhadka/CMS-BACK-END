@@ -13,9 +13,9 @@ export class ContractExpiryCronUsecase {
   ) {}
 
   /**
-   * Runs every day at 9 AM (Nepal Time)
+   * Runs every day at 10 PM (Nepal Time)
    */
-  @Cron(CronExpression.EVERY_DAY_AT_9AM, {
+  @Cron(CronExpression.EVERY_DAY_AT_10PM, {
     timeZone: 'Asia/Kathmandu',                                                     
   })
   async execute() {
