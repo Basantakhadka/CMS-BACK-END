@@ -205,7 +205,7 @@ export class ContractAlertsDbRepository implements ContractAlertsRepository {
       ON c.id = a.contract_id
       AND c.deleted = false
     WHERE a.deleted = false
-      AND a.trigger_expiry = true
+    
   `;
 
         const results = await this.repository.query(query);
