@@ -2,16 +2,18 @@
 import { RequestContext } from "@app/core/middleware/request_context";
 import { Usecase } from "@app/core/usecase/usecase";
 import { Result } from "@app/feature/common/result";
-import { NotFoundException } from "@nestjs/common";
+import { Inject, NotFoundException } from "@nestjs/common";
 
 import { DeleteContractAlertUsecaseRequest } from "./request/delete-contract-alert.usecase.request";
 import { DeleteContractAlertUsecaseResponse } from "./response/delete-contract-alert.usecase.response";
 import { ContractAlertsRepository } from "../repositories/alerts.repository";
+import { ContractAlertsDbRepository } from "../repositories/db/alerts.repository";
 
 export class DeleteContractAlertUsecase
   implements Usecase<DeleteContractAlertUsecaseRequest, DeleteContractAlertUsecaseResponse>
 {
   constructor(
+    @Inject(ContractAlertsDbRepository)
     private readonly contractAlertRepository: ContractAlertsRepository
   ) {}
 

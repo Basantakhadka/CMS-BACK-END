@@ -3,6 +3,7 @@ import { Usecase } from "@app/core/usecase/usecase";
 import { Result } from "@app/feature/common/result";
 import {
 	Inject,
+	Logger,
 	NotAcceptableException,
 } from "@nestjs/common";
 
@@ -19,9 +20,11 @@ import { IdGenerator } from "@app/shared/id-generator";
 import { UserCredential } from "../entities/user-credential.entity";
 import { hashPassword } from "@app/core/hashing/hashing";
 import { UserCredentialRepository } from "../repositories/user-credential.repository";
+import { EmailService } from "@app/feature/notification/notification.service";
 
 export class AddUserUsecase
 	implements Usecase<AddUserUsecaseRequest, AddUserUsecaseResponse> {
+	private readonly logger = new Logger(AddUserUsecase.name);
 
 	constructor (
 		@Inject(UserDbRepository)
@@ -32,6 +35,7 @@ export class AddUserUsecase
 
 		@Inject(RolesDbRepository)
 		private readonly rolesRepository: RolesRepository,
+		@Inject(EmailService) private emailService?: EmailService
 	) { }
 
 	async execute(
@@ -65,13 +69,13 @@ export class AddUserUsecase
 		users.createdOn = new Date();
 
 		await this.userRepository.insert(users);
-		const randomPassword: string = "Test@123";
+		const randomPassword: string = this.generatePassword();
 
 		// 3️⃣ Create User Credential
 		const credential = new UserCredential();
 		credential.id = userId; // 🔑 SAME ID (important)
 		credential.password = await hashPassword(randomPassword, users.id, users.userId);
-		version: IdGenerator.generateId("4"),
+		credential.version = IdGenerator.generateId("4"),
 			credential.enforcePasswordChange = true;
 		credential.unsuccessfulLoginAttempts = 0;
 		credential.loginAttemptsTimer = null,
@@ -82,8 +86,8 @@ export class AddUserUsecase
 
 
 		await this.userCredentialRepository.insert(credential);
+		await this.sendWelcomeEmail(users, randomPassword);
 
-		console.log({users})
 
 		// 4️⃣ Assign roles
 		users?.roles?.forEach(async (role) => {
@@ -101,6 +105,41 @@ export class AddUserUsecase
 	}
 
 	// --------------------------------------------------
+
+	private async sendWelcomeEmail(
+		user: User,
+		temporaryPassword: string,
+	): Promise<void> {
+		if (!this.emailService) {
+			return;
+		}
+
+		const displayName = user.userName || user.userId;
+
+		try {
+			await this.emailService.sendEmail({
+				emailProperties: {
+					to: user.userId,
+					subject: "CMS account created",
+					body: `Hi ${ displayName },\n\nYour CMS account is ready.\nUsername: ${ user.userId }\nTemporary Password: ${ temporaryPassword }\n\nPlease sign in and change your password immediately.`,
+					htmlBody: `
+						<p>Hi ${ displayName },</p>
+						<p>Your CMS account has been created. Use the credentials below to sign in:</p>
+						<ul>
+							<li><strong>Username:</strong> ${ user.userId }</li>
+							<li><strong>Temporary Password:</strong> ${ temporaryPassword }</li>
+						</ul>
+						<p>Please sign in and change your password immediately after logging in.</p>
+					`,
+				},
+			});
+		} catch (error) {
+			this.logger.error(
+				`Failed to send welcome email to ${ user.userId }`,
+				error instanceof Error ? error.stack : JSON.stringify(error),
+			);
+		}
+	}
 
 	private async validateUserAttributeExists(
 		request: AddUserUsecaseRequest,

@@ -105,39 +105,94 @@ export class ContractAlertsDbRepository implements ContractAlertsRepository {
     async findAllAndResponseWithPagination(
         filters: FilterConditionsDto,
         pageableInfo: any
-    ): Promise<Page<ContractAlert>> {
+    ): Promise<Page<any>> {
         await this.setRepository();
-        const queryBuilder = this.repository
-            .createQueryBuilder()
-            .where("deleted = false");
-        const options: PaginationOptions = {
-            columnsMap: null,
-            defaultSortMeta: new SortMeta("createdAt,id", SortOrder.DESC),
-            filters: filters.filters,
+
+        const alertTable = ContractAlert.getTableName(); // e.g., cms_contract_alerts
+        const contractTable = Contract.getTableName();   // e.g., cms_contracts
+        const schema = this.repository.schema || 'public';
+
+        // Build the WHERE conditions from filters dynamically
+        let whereClause = "a.deleted = false";
+        if (filters?.filters) {
+            Object.keys(filters.filters).forEach((key) => {
+                const value = filters.filters[key];
+                whereClause += ` AND a.${key} = '${value}'`;
+            });
+        }
+
+        // Pagination calculations
+        const page = pageableInfo.page || 1;
+        const size = pageableInfo.size || 10;
+        const offset = (page - 1) * size;
+
+        // Raw SQL query
+        const query = `
+  SELECT 
+    a.id,
+    a.reminder_interval,
+    a.stakeholders::jsonb,
+    a.communication_channels::jsonb,
+    a.created_at,
+    a.updated_at,
+    c.id AS contract_id,
+    c.contract_title,
+    c.expiry_date
+  FROM ${schema}."${alertTable}" a
+  INNER JOIN ${schema}."${contractTable}" c
+    ON c.id = a.contract_id
+ and a.deleted = false
+  WHERE ${whereClause}
+  ORDER BY a.created_at DESC
+  LIMIT ${size} OFFSET ${offset}
+`;
+
+        // Execute raw query
+        const alerts = await this.repository.query(query);
+
+        // Count total for pagination
+        const countQuery = `
+        SELECT COUNT(*) as total
+        FROM ${schema}."${alertTable}" a
+        INNER JOIN ${schema}."${contractTable}" c
+            ON c.id = a.contract_id AND c.deleted = false
+        WHERE ${whereClause}
+    `;
+        const totalResult = await this.repository.query(countQuery);
+        const totalElements = parseInt(totalResult[0]?.total || 0);
+
+        // Build Page object
+        const pageResponse: Page<any> = {
+            getTotalPages: () => Math.ceil(totalElements / size),
+            getCurrentPage: () => page,
+            getSize: () => size,
+            getTotalElements: () => totalElements,
+            getElements: () => alerts,
+            getSortMetas: () => [new SortMeta("createdAt,id", SortOrder.DESC)],
         };
-        const pagination = new Pagination<ContractAlert>(this.repository, pageableInfo);
-        const page = pagination.paginate(queryBuilder, options);
-        return page;
+
+        return pageResponse;
     }
 
-async findActiveExpiryAlertsWithContract(): Promise<
-  {
-    alertId: string;
-    reminderInterval: number;
-    contractId: string;
-    expiryDate: Date;
-    title: string;
-    stakeholders: string[]; // if you store them as array in DB
-  }[]
-> {
-  await this.setRepository();
 
-  const alertTable = ContractAlert.getTableName(); // e.g., cms_contract_alerts
-  const contractTable = Contract.getTableName();   // e.g., cms_contracts
-  const schema = this.repository.schema || 'public'; // your schema
+    async findActiveExpiryAlertsWithContract(): Promise<
+        {
+            alertId: string;
+            reminderInterval: number;
+            contractId: string;
+            expiryDate: Date;
+            title: string;
+            stakeholders: string[]; // if you store them as array in DB
+        }[]
+    > {
+        await this.setRepository();
 
-  // Raw SQL query
-  const query = `
+        const alertTable = ContractAlert.getTableName(); // e.g., cms_contract_alerts
+        const contractTable = Contract.getTableName();   // e.g., cms_contracts
+        const schema = this.repository.schema || 'public'; // your schema
+
+        // Raw SQL query
+        const query = `
     SELECT 
       a.id AS "alertId",
       a.reminder_interval AS "reminderInterval",
@@ -153,10 +208,10 @@ async findActiveExpiryAlertsWithContract(): Promise<
       AND a.trigger_expiry = true
   `;
 
-  const results = await this.repository.query(query);
+        const results = await this.repository.query(query);
 
-  return results;
-}
+        return results;
+    }
 
 
 

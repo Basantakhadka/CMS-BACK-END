@@ -46,7 +46,7 @@ export class UserLoginService {
 		userCredential: UserCredential,
 		requestContext: RequestContext,
 		enforcePasswordChange: boolean,
-		MFAStatus: string
+	
 	) {
 		let permissions: string[] = [];
 		const userRoles = [];
@@ -72,7 +72,7 @@ export class UserLoginService {
 			version: userCredential.version,
 			schema: requestContext.getCurrentUser().schema,
 			enforcePasswordChange,
-			MFAStatus,
+			
 			sessionId,
 		};
 
@@ -95,7 +95,7 @@ export class UserLoginService {
 			permissions: !enforcePasswordChange ? permissions : [],
 			accessToken,
 			enforcePasswordChange,
-			mfaStatus: MFAStatus,
+
 		};
 
 		await this.cacheServiceFactory.cacheData(jwtId, accessToken, {

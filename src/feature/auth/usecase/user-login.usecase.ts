@@ -169,9 +169,6 @@ export class UserLoginUsecase
 		user: User,
 		userCredential: UserCredential
 	) {
-		const enabledUnsuccessfulAttempts =
-			passwordPolicy.failedLoginAttempts.active;
-		const userLoginAttemptsLimit = +passwordPolicy.failedLoginAttempts.limits;
 		// await this.validateAndResetFailedLoginAttempts(user, userCredential);
 		const updatedUserCredential = await this.userCredentialRepository.findById(
 			user.id
@@ -185,28 +182,7 @@ export class UserLoginUsecase
 			);
 		}
 		let unsuccessfulLoginAttempts =
-			updatedUserCredential.unsuccessfulLoginAttempts || 0;
-
-		if (enabledUnsuccessfulAttempts) {
-			unsuccessfulLoginAttempts += 1;
-			if (unsuccessfulLoginAttempts >= userLoginAttemptsLimit) {
-				await this.blockUser(user);
-			}
-
-			await this.updateUserCredential({
-				id: user.id,
-				unsuccessfulLoginAttempts,
-				loginAttemptsTimer: Date.now().toString(),
-			});
-			const attemptsLeft =
-				userLoginAttemptsLimit - unsuccessfulLoginAttempts + 1;
-			const message = `Incorrect username or password. You have ${ attemptsLeft } attempts left.`;
-
-			Result.createErrorWithMessage(
-				new BadRequestException(message),
-				"Login Failed"
-			);
-		}
+			updatedUserCredential.unsuccessfulLoginAttempts || 0
 
 		Result.createErrorWithMessage(
 			new BadRequestException("Incorrect username or password"),
@@ -275,11 +251,9 @@ export class UserLoginUsecase
 			await this.validateUserLogin(isPasswordCorrect, userCredential, user);
 		}
 		const policy = await this.generalPolicyRepository.findAll();
-		const isMFAEnabled = policy[0]?.usersMfa && policy[0]?.usersMfa.otp.active;
-		const MFAStatus = isMFAEnabled ? MFASTATUS.ACTIVE : MFASTATUS.INACTIVE;
 		const sessionId = IdGenerator.generateId("v4");
 
-		if (isMFAEnabled || enforcePasswordChange) {
+		if ( enforcePasswordChange) {
 
 			const payload = {
 				userId: user.userId,
@@ -319,7 +293,6 @@ export class UserLoginUsecase
 			userCredential,
 			requestContext,
 			enforcePasswordChange,
-			MFAStatus
 		);
 		const response = new UserLoginUsecaseResponse(loginResponse);
 		return Result.createSuccess(response);

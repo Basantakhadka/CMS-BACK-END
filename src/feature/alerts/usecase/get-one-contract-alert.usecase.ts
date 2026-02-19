@@ -32,7 +32,6 @@ export class GetOneContractAlertUsecase
         `Cannot find contract alert with id ${request.id}`
       );
     }
-    console.log({ savedAlert });
 
     // 2️⃣ Prepare response object
     const response = new GetOneContractAlertUsecaseResponse({

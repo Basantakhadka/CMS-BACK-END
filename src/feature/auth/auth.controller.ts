@@ -8,6 +8,9 @@ import { UserLoginUsecase } from "./usecase/user-login.usecase";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { UserLogoutUsecase } from "./usecase/user-logout.usecase";
 import { UserLogoutUsecaseRequest } from "./usecase/request/user-logout.usecase.request";
+import { ChangePasswordUsecaseRequest } from "./usecase/request/change-password.usecase.request";
+import { changePasswordUsecase } from "./usecase/change-password.usecase";
+import { ChangePasswordDto } from "./dto/change-password.dto";
 
 
 
@@ -18,6 +21,7 @@ export class AuthController {
     constructor (
         private userLoginUsecase: UserLoginUsecase,
         private userLogoutUsecase: UserLogoutUsecase,
+        private changePasswordUsecase: changePasswordUsecase,
         private readonly als: AsyncLocalStorage<RequestContext>,
 
     ) { }
@@ -35,6 +39,22 @@ export class AuthController {
         );
         return response;
     }
+
+    @Post("change-password")
+	async changePassword(@Body() body: ChangePasswordDto) {
+		const { password, confirmPassword, oldPassword, username } = body;
+		const request = new ChangePasswordUsecaseRequest(
+			password,
+			confirmPassword,
+			oldPassword,
+			username
+		);
+		const response = await this.changePasswordUsecase.execute(
+			request,
+			this.als.getStore()
+		);
+		return response;
+	}
 
 
     @Get("logout")
