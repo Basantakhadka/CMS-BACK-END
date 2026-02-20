@@ -22,6 +22,10 @@ export class UpdateContractDto {
 
   @IsOptional()
   @IsString()
+  contractDate?: string;
+
+  @IsOptional()
+  @IsString()
   documentLink?: string;
 
   @IsOptional()

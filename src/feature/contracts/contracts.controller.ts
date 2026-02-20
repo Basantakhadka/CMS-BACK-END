@@ -56,7 +56,8 @@ export class ContractsController {
             createContract.title,   // contractTitle
             createContract.type,    // contractType
             createContract.parties,          // parties
-            createContract.expiryDate,      // expiryDate
+            createContract.expiryDate,  
+            createContract.contractDate,       // contractDate
             createContract.documentLink,    // documentLink
             createContract.contractValue,   // contractValue (optional)
             createContract.jurisdiction,     // jurisdiction (optional)
@@ -86,11 +87,11 @@ export class ContractsController {
         const updateContract: UpdateContractDto = body;
         const request = new UpdateContractUsecaseRequest(
             id,
-
             updateContract.title,
             updateContract.type,    
             updateContract.parties,          
-            updateContract.expiryDate,      
+            updateContract.expiryDate,   
+            updateContract.contractDate,
             updateContract.documentLink,    
             updateContract.contractValue,   
             updateContract.jurisdiction,     

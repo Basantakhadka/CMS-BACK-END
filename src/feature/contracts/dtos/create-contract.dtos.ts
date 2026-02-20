@@ -19,6 +19,9 @@ export class CreateContractDto {
   @IsNotEmpty()
   expiryDate: string; // Stored as ISO date string
 
+  @IsNotEmpty()
+  contractDate: string; 
+
   @IsString()
   @IsNotEmpty()
   documentLink: string;

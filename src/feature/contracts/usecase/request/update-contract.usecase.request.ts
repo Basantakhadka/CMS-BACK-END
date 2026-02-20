@@ -6,7 +6,8 @@ export class UpdateContractUsecaseRequest implements UsecaseRequest {
     public title?: string,
     public type?: string,
     public parties?: string[],
-    public expiryDate?: string,         // ISO string
+    public expiryDate?: string,  
+    public contractDate?: string,       // ISO string
     public documentLink?: string,
     public contractValue?: number,
     public jurisdiction?: string,

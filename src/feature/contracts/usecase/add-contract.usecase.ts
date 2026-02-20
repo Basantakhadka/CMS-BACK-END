@@ -34,6 +34,7 @@ export class AddContractUsecase
     contract.contract_type = request.type;
     contract.parties = request.parties;
     contract.expiry_date = request.expiryDate;
+    contract.contract_date = request.contractDate;
     contract.document_link = request.documentLink;
     contract.contract_value = request.contractValue;
     contract.jurisdiction = request.jurisdiction;

@@ -118,4 +118,22 @@ export class ContractDbRepository implements ContractRepository {
         return page;
     }
 
+async autoRenewContracts(): Promise<number> {
+    await this.setRepository();
+
+    const query = `
+        UPDATE ${this.repository.schema}.${Contract.getTableName()}
+        SET expiry_date = expiry_date + (expiry_date - contract_date),
+            updated_at = NOW()
+        WHERE renewal_terms = 'Auto'
+          AND deleted = false
+          AND expiry_date <= CURRENT_DATE
+        RETURNING id;
+    `;
+
+    const result = await this.repository.query(query);
+
+    return result.length; // number of contracts renewed
+}
+
 }
