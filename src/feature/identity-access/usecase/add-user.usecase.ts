@@ -65,6 +65,7 @@ export class AddUserUsecase
 		users.roles = request.roles;
 		users.active = true;
 		users.deleted = false;
+		users.userType="SERVICE";
 		users.createdBy = { label: "SYSTEM", value: loggedInUser };
 		users.createdOn = new Date();
 
