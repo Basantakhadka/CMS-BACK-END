@@ -44,6 +44,7 @@ export class UpdateUserUsecase implements Usecase<UpdateUserUsecaseRequest, Upda
         user.employeeId = request.employeeId;
         user.roles = request.roles;
         user.userId = request.userId;
+        user.userType='SERVICE';
         user.userName = request.userName;
         user.active = request.active;
         await this.userRepository.update(user);
