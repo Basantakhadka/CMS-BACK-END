@@ -21,6 +21,10 @@ parties: any[];
   @Column({ type: 'date' })
   expiry_date: string;
 
+
+   @Column({ type: 'date' })
+  contract_date: string;
+
   @Column()
   document_link: string;
 
@@ -63,6 +67,7 @@ deleted: boolean;
     map.set("created_at", "createdAt");
     map.set("updated_at", "updatedAt");
     map.set("governing_law", "governingLaw");
+    map.set('contract_date', 'contractDate');
     return map;
   }
   

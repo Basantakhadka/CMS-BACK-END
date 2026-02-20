@@ -54,6 +54,12 @@ export class GetContractsListUsecase
             DateTimePatternType.MMM_DD_YYYY_HMS.displayname
           )
         : null;
+        dto.contractDate = contract.contract_date
+        ? DateUtils.formatDateTime(
+            contract.contract_date,
+            DateTimePatternType.MMM_DD_YYYY_HMS.displayname
+          )
+        : null;
       dto.documentLink = contract.document_link;
       dto.contractValue = contract.contract_value;
       dto.jurisdiction = contract.jurisdiction;

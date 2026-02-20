@@ -38,6 +38,7 @@ export class GetOneContractUsecase
       type: savedContract.contract_type,
       parties: savedContract.parties,
       expiryDate: savedContract.expiry_date,
+      contractDate: savedContract.contract_date,
       documentLink: savedContract.document_link,
       contractValue: savedContract.contract_value,
       jurisdiction: savedContract.jurisdiction,

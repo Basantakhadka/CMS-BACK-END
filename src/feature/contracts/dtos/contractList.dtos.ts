@@ -3,7 +3,8 @@ export class GetContractListResponseDto {
     title: string;     // Contract Title
     type: string;      // Contract Type
     parties: any[];            // Parties involved (JSON array)
-    expiryDate: string;        // Expiry Date (ISO string)
+    expiryDate: string;   
+    contractDate: string;     // Contract Date (ISO string)
     documentLink: string;      // Document link
     contractValue?: number;    // Optional Contract value
     jurisdiction?: string;     // Optional Jurisdiction

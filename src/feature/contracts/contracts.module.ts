@@ -12,6 +12,7 @@ import { DeleteContractUsecase } from "./usecase/delete-contract.usecase";
 import { GetContractsListUsecase } from "./usecase/get-contractList.usecase";
 import { GetOneContractUsecase } from "./usecase/get-one-contract.usecase";
 import {  GetContractsForSelectMenuUsecase } from "./usecase/get-contract-dropdown.usecase";
+import { ContractAutoRenewCronUsecase } from "./usecase/auto-renewal-contract-cron.usecase";
 
 
 @Module({
@@ -27,7 +28,8 @@ import {  GetContractsForSelectMenuUsecase } from "./usecase/get-contract-dropdo
         DeleteContractUsecase,
         GetContractsListUsecase,
         GetOneContractUsecase,
-        GetContractsForSelectMenuUsecase
+        GetContractsForSelectMenuUsecase,
+        ContractAutoRenewCronUsecase
 
 
 

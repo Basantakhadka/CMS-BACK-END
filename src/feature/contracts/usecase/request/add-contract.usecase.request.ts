@@ -6,6 +6,7 @@
         public type: string,
         public parties: string[],
         public expiryDate: string, // ISO string
+        public contractDate: string,
         public documentLink: string,
         public contractValue: number,
         public jurisdiction: string,
