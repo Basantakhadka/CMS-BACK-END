@@ -41,4 +41,19 @@ export class CreateContractDto {
   @IsOptional()
   @IsString()
   governingLaw?: string;
+
+   @IsOptional()
+  @IsString()
+  scopeOfWork?: string;
+
+  @IsOptional()
+  amendmentDate?: string;
+
+  @IsOptional()
+  @IsString()
+  amendmentLink?: string;
+
+  @IsOptional()
+  @IsString()
+  terminationNoticeDays?: string;
 }

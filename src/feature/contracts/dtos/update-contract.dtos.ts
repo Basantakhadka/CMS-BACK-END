@@ -1,5 +1,5 @@
 // update-contract.dto.ts
-import { IsString, IsNotEmpty, IsOptional, IsArray, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsArray, IsNumber, IsDateString } from 'class-validator';
 
 export class UpdateContractDto {
 
@@ -43,4 +43,19 @@ export class UpdateContractDto {
   @IsOptional()
   @IsString()
   governingLaw?: string;
+
+   @IsOptional()
+    @IsString()
+    scopeOfWork?: string;
+  
+    @IsOptional()
+    amendmentDate?: string;
+  
+    @IsOptional()
+    @IsString()
+    amendmentLink?: string;
+  
+    @IsOptional()
+    @IsString()
+    terminationNoticeDays?: string;
 }

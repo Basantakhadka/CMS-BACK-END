@@ -65,6 +65,15 @@ export class GetContractsListUsecase
       dto.jurisdiction = contract.jurisdiction;
       dto.renewalTerms = contract.renewal_terms;
       dto.governingLaw = contract.governing_law;
+      dto.scopeOfWork = contract.scope_of_work;
+      dto.amendmentDate = contract.amendment_date
+        ? DateUtils.formatDateTime(
+            contract.amendment_date,
+            DateTimePatternType.MMM_DD_YYYY_HMS.displayname
+          )
+        : null;
+      dto.amendmentLink = contract.amendment_link;
+      dto.terminationNoticeDays = contract.termination_notice_days;
       dto.createdAt = contract.created_at
         ? DateUtils.formatDateTime(
             contract.created_at,

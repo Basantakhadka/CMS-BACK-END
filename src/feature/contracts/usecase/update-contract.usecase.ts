@@ -38,6 +38,10 @@ export class UpdateContractUsecase
     existingContract.jurisdiction = request.jurisdiction ?? existingContract.jurisdiction;
     existingContract.renewal_terms = request.renewalTerms ?? existingContract.renewal_terms;
     existingContract.governing_law = request.governingLaw ?? existingContract.governing_law;
+    existingContract.scope_of_work = request.scopeOfWork ?? existingContract.scope_of_work;
+    existingContract.amendment_date = request.amendmentDate ?? existingContract.amendment_date;
+    existingContract.amendment_link = request.amendmentLink ?? existingContract.amendment_link;
+    existingContract.termination_notice_days = request.terminationNoticeDays ?? existingContract.termination_notice_days;
 
     // Audit fields
     const loggedInUser = requestContext?.getCurrentUser()?.loginId || "SYSTEM";

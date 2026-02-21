@@ -11,6 +11,10 @@
         public contractValue: number,
         public jurisdiction: string,
         public renewalTerms: string,
-        public governingLaw:string
+        public governingLaw:string,
+        public scopeOfWork?: string,
+        public amendmentDate?: string,
+        public amendmentLink?: string,
+        public terminationNoticeDays?: string
     ) {}
     }

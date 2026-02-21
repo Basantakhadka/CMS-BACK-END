@@ -45,7 +45,11 @@ export class GetOneContractUsecase
       renewalTerms: savedContract.renewal_terms,
       governingLaw: savedContract.governing_law,
       createdAt: savedContract.created_at,
-      updatedAt: savedContract.updated_at
+      updatedAt: savedContract.updated_at,
+      scopeOfWork: savedContract.scope_of_work,
+      amendmentDate: savedContract.amendment_date,
+      amendmentLink: savedContract.amendment_link,
+      terminationNoticeDays: savedContract.termination_notice_days
     });
 
     // 3️⃣ Return success result
