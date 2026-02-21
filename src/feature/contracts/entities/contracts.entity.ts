@@ -4,7 +4,7 @@ import { PrimaryTextColumn } from '@app/shared/entities/entities.decorator';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('cms_contracts')
-export class Contract  {
+export class Contract {
   [x: string]: any;
   @PrimaryTextColumn()
   id: string;
@@ -16,13 +16,13 @@ export class Contract  {
   contract_type: string;
 
   @Column({ type: 'jsonb' })
-parties: any[]; 
+  parties: any[];
 
   @Column({ type: 'date' })
   expiry_date: string;
 
 
-   @Column({ type: 'date' })
+  @Column({ type: 'date' })
   contract_date: string;
 
   @Column()
@@ -45,9 +45,23 @@ parties: any[];
 
   @UpdateDateColumn()
   updated_at: Date;
-  
+
   @Column({ type: 'boolean', default: false })
-deleted: boolean;
+  deleted: boolean;
+
+  @Column({ nullable: true, type: "text" })
+  scope_of_work?: string;
+
+  @Column({ nullable: true, type: "date" })
+  amendment_date?: string;
+
+  @Column({ nullable: true, type: "text" })
+  amendment_link?: string;
+
+  @Column({ nullable: true, type: "text" })
+  termination_notice_days?: string;
+
+
 
   static getTableName() {
     return "cms_contracts";
@@ -68,9 +82,13 @@ deleted: boolean;
     map.set("updated_at", "updatedAt");
     map.set("governing_law", "governingLaw");
     map.set('contract_date', 'contractDate');
+    map.set("scope_of_work", "scopeOfWork");
+    map.set("amendment_date", "amendmentDate");
+    map.set("amendment_link", "amendmentLink");
+    map.set("termination_notice_days", "terminationNoticeDays");
     return map;
   }
-  
+
 
   getClusterColumns?(): string[] {
     // If you have clustered columns for sharding / partitioning, list them here

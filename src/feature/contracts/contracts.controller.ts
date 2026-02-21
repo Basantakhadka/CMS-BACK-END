@@ -62,7 +62,11 @@ export class ContractsController {
             createContract.contractValue,   // contractValue (optional)
             createContract.jurisdiction,     // jurisdiction (optional)
             createContract.renewalTerms,
-            createContract.governingLaw    // renewalTerms (optional)
+            createContract.governingLaw ,
+            createContract.scopeOfWork,
+            createContract.amendmentDate,
+            createContract.amendmentLink,
+            createContract.terminationNoticeDays
         );
 
         return await this.addContractUsecase.execute(request, this.als.getStore());
@@ -96,7 +100,11 @@ export class ContractsController {
             updateContract.contractValue,   
             updateContract.jurisdiction,     
             updateContract.renewalTerms,
-            updateContract.governingLaw
+            updateContract.governingLaw,
+            updateContract.scopeOfWork,
+            updateContract.amendmentDate,
+            updateContract.amendmentLink,
+            updateContract.terminationNoticeDays
         );
         return await this.updateContractUsecase.execute(request, this.als.getStore());
     }

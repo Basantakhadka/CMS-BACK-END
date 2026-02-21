@@ -40,6 +40,10 @@ export class AddContractUsecase
     contract.jurisdiction = request.jurisdiction;
     contract.renewal_terms = request.renewalTerms;
     contract.governing_law = request.governingLaw;
+    contract.scope_of_work = request.scopeOfWork;
+    contract.amendment_date = request.amendmentDate;
+    contract.amendment_link = request.amendmentLink;
+    contract.termination_notice_days = request.terminationNoticeDays;
 
     console.log({contract})
 
