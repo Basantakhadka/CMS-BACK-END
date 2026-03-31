@@ -12,16 +12,21 @@ import { SearchMeta } from "@app/core/repository/search/search.meta";
 import { SortMeta, SortOrder } from "@app/core/repository/search/sort.meta";
 import { FilterConditionsDto } from "@app/shared/dtos/filter-conditions.dto";
 import { LabelValuePair } from "@app/shared/entities/label-value-pair.view";
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { Filter } from "@app/core/repository/search/filter";
 import { DynamicQueryBuilder } from "@app/core/repository/search/query-builder";
 import { ContractAlertsRepository } from "../alerts.repository";
 import { ContractAlert } from "../../entities/alerts.entity";
 import { Contract } from "@app/feature/contracts/entities/contracts.entity";
+import { AsyncLocalStorage } from "async_hooks";
+import { RequestContext } from "@app/core/middleware/request_context";
 
 @Injectable()
 export class ContractAlertsDbRepository implements ContractAlertsRepository {
-    constructor(private dataSourceService: DatasourceService) { }
+    constructor(
+        private dataSourceService: DatasourceService,
+        private readonly als: AsyncLocalStorage<RequestContext>,
+    ) { }
     async findByAlertsId(alertsId: string): Promise<ContractAlert> {
         await this.setRepository();
         return this.repository.findOneBy({ id: alertsId });
@@ -42,29 +47,44 @@ export class ContractAlertsDbRepository implements ContractAlertsRepository {
 
     private repository: CustomRepository<ContractAlert>;
 
+    private getClientCode(strict = true) {
+        const clientCode = this.als.getStore()?.getCurrentUser()?.clientCode;
+        if (!clientCode && strict) {
+            throw new UnauthorizedException('Missing client context');
+        }
+        return clientCode;
+    }
+
     private async setRepository() {
         this.repository = await this.dataSourceService.getRepository(ContractAlert);
     }
 
     async insert(entity: ContractAlert): Promise<ContractAlert> {
         await this.setRepository();
+        const clientCode = entity.client_code || this.getClientCode();
+        entity.client_code = clientCode;
         const contractAdd = await this.repository.insert(entity);
         return contractAdd.raw[0];
     }
     async update(entity: Partial<ContractAlert>): Promise<ContractAlert> {
         await this.setRepository();
-        const updatedContract = await this.repository.update({ id: entity.id }, entity);
+        const clientCode = this.getClientCode(false);
+        const updatedContract = await this.repository.update({ id: entity.id, client_code: clientCode }, entity);
         return updatedContract.raw[0];
     }
     async delete(entity: ContractAlert): Promise<void> {
         await this.setRepository();
-        await this.repository.update({ id: entity.id }, entity);
+        const clientCode = this.getClientCode();
+        await this.repository.update({ id: entity.id, client_code: clientCode }, entity);
     }
     async findById(id: any): Promise<ContractAlert> {
         await this.setRepository();
-        const savedContract = await this.repository.findOneBy({
-            id,
-        });
+        const clientCode = this.getClientCode(false);
+        const criteria: any = { id };
+        if (clientCode) {
+            criteria.client_code = clientCode;
+        }
+        const savedContract = await this.repository.findOneBy(criteria);
         return savedContract;
     }
     findAllWithFilters(filters: SearchMeta): Promise<ContractAlert[]> {
@@ -72,7 +92,11 @@ export class ContractAlertsDbRepository implements ContractAlertsRepository {
     }
     async findTotalCountWithFilters(filters: SearchMeta): Promise<number> {
         await this.setRepository();
-        const queryBuilder = this.repository.createQueryBuilder().where("deleted = false");
+        const clientCode = this.getClientCode();
+        const queryBuilder = this.repository
+            .createQueryBuilder()
+            .where("deleted = false")
+            .andWhere("client_code = :clientCode", { clientCode });
         const dynamicBuilder = new DynamicQueryBuilder(queryBuilder).applyFilters(
             filters.filters
         );
@@ -87,19 +111,21 @@ export class ContractAlertsDbRepository implements ContractAlertsRepository {
 
     async findTotalCount(): Promise<number> {
         await this.setRepository();
+        const clientCode = this.getClientCode();
         const query = `SELECT count(id) as total FROM ${this.repository.schema
-            }.${ContractAlert.getTableName()} WHERE deleted = false`;
-        const total = await this.repository.query(query);
+            }.${ContractAlert.getTableName()} WHERE deleted = false AND client_code = $1`;
+        const total = await this.repository.query(query, [clientCode]);
         return parseInt(total[0]?.total || 0);
     }
     async findAllLabelValuePairByIds(list: string[]): Promise<LabelValuePair[]> {
         await this.setRepository();
-        const query = `SELECT id as value, user_name as "userName",employee_id as "employeeId" from ${this.repository.schema
-            }.${ContractAlert.getTableName()} where id in ( ${list.map((id) => `'${id}'`)} )`;
-        const usersList = await this.repository.query(query);
+        const clientCode = this.getClientCode();
+        const placeholders = list.map((_, index) => `$${ index + 2 }`).join(",");
+        const query = `SELECT id as value, contract_id as "contractId" from ${this.repository.schema
+            }.${ContractAlert.getTableName()} where client_code = $1 and id in ( ${placeholders} )`;
+        const usersList = await this.repository.query(query, [clientCode, ...list]);
         return usersList?.map(
-            (data) =>
-                new LabelValuePair(data.userName + "-" + data.employeeId, data.value)
+            (data) => new LabelValuePair(data.contractId, data.value)
         );
     }
     async findAllAndResponseWithPagination(
@@ -107,6 +133,7 @@ export class ContractAlertsDbRepository implements ContractAlertsRepository {
         pageableInfo: any
     ): Promise<Page<any>> {
         await this.setRepository();
+        const clientCode = this.getClientCode();
 
         const alertTable = ContractAlert.getTableName(); // e.g., cms_contract_alerts
         const contractTable = Contract.getTableName();   // e.g., cms_contracts
@@ -114,6 +141,7 @@ export class ContractAlertsDbRepository implements ContractAlertsRepository {
 
         // Build the WHERE conditions from filters dynamically
         let whereClause = "a.deleted = false";
+        whereClause += ` AND a.client_code = '${ clientCode }'`;
         if (filters?.filters) {
             Object.keys(filters.filters).forEach((key) => {
                 const value = filters.filters[key];
@@ -152,12 +180,12 @@ export class ContractAlertsDbRepository implements ContractAlertsRepository {
 
         // Count total for pagination
         const countQuery = `
-        SELECT COUNT(*) as total
-        FROM ${schema}."${alertTable}" a
-        INNER JOIN ${schema}."${contractTable}" c
-            ON c.id = a.contract_id AND c.deleted = false
-        WHERE ${whereClause}
-    `;
+            SELECT COUNT(*) as total
+            FROM ${schema}."${alertTable}" a
+            INNER JOIN ${schema}."${contractTable}" c
+                ON c.id = a.contract_id AND c.deleted = false
+            WHERE ${whereClause}
+        `;
         const totalResult = await this.repository.query(countQuery);
         const totalElements = parseInt(totalResult[0]?.total || 0);
 
@@ -186,12 +214,14 @@ export class ContractAlertsDbRepository implements ContractAlertsRepository {
         }[]
     > {
         await this.setRepository();
+        const clientCode = this.getClientCode();
 
         const alertTable = ContractAlert.getTableName(); // e.g., cms_contract_alerts
         const contractTable = Contract.getTableName();   // e.g., cms_contracts
         const schema = this.repository.schema || 'public'; // your schema
 
         // Raw SQL query
+        const clientClause = clientCode ? ` AND a.client_code = '${ clientCode }'` : '';
         const query = `
     SELECT 
       a.id AS "alertId",
@@ -204,7 +234,8 @@ export class ContractAlertsDbRepository implements ContractAlertsRepository {
     INNER JOIN ${schema}."${contractTable}" c
       ON c.id = a.contract_id
       AND c.deleted = false
-    WHERE a.deleted = false
+            WHERE a.deleted = false
+              ${clientClause}
     
   `;
 

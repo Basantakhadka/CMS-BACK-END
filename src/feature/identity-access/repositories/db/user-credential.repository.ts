@@ -3,7 +3,7 @@ import { RequestContext } from "@app/core/middleware/request_context";
 import { Page } from "@app/core/repository/search/page";
 import { PageableInfo } from "@app/core/repository/search/pageable.info";
 import { SearchMeta } from "@app/core/repository/search/search.meta";
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { AsyncLocalStorage } from "async_hooks";
 import { Repository } from "typeorm";
 import { UserCredential } from "../../entities/user-credential.entity";
@@ -22,6 +22,14 @@ export class UserCredentialDbRepository implements UserCredentialRepository {
 
 	private repository: Repository<UserCredential>;
 
+	private getClientCode(strict = true) {
+		const clientCode = this.als.getStore()?.getCurrentUser()?.clientCode;
+		if (!clientCode && strict) {
+			throw new UnauthorizedException("Missing client context");
+		}
+		return clientCode;
+	}
+
 	private async setRepository(schema?: string) {
 		this.repository = await this.dataSourceService.getRepository(
 			UserCredential,
@@ -30,11 +38,14 @@ export class UserCredentialDbRepository implements UserCredentialRepository {
 	}
 	async insert(entity: UserCredential): Promise<UserCredential> {
 		await this.setRepository();
+		const clientCode = entity.clientCode || this.getClientCode();
+		entity.clientCode = clientCode;
 		return (await this.repository.insert(entity)).raw[0];
 	}
 	async update(entity: Partial<UserCredential>): Promise<UserCredential> {
 		await this.setRepository();
-		const user = await this.repository.update({ id: entity.id }, entity);
+		const clientCode = entity.clientCode || this.getClientCode();
+		const user = await this.repository.update({ id: entity.id, clientCode }, entity);
 		return user.raw[0];
 	}
 	delete(entity: UserCredential): Promise<void> {
@@ -42,7 +53,12 @@ export class UserCredentialDbRepository implements UserCredentialRepository {
 	}
 	async findById(id: string): Promise<UserCredential> {
 		await this.setRepository();
-		const user = await this.repository.findOneBy({ id });
+		const clientCode = this.getClientCode(false);
+		const criteria: any = { id };
+		if (clientCode) {
+			criteria.clientCode = clientCode;
+		}
+		const user = await this.repository.findOneBy(criteria);
 		return user;
 	}
 	findAllWithFilters(filters: SearchMeta): Promise<UserCredential[]> {
@@ -63,9 +79,13 @@ export class UserCredentialDbRepository implements UserCredentialRepository {
 	findTotalCount(): Promise<number> {
 		throw new Error("Method not implemented.");
 	}
-	async findUserByIdWithKeyspace(id: string, schema: string) {
+	async findUserByIdWithKeyspace(id: string, schema: string, clientCode?: string) {
 		await this.setRepository(schema);
-		const user = await this.repository.findOneBy({ id });
+		const criteria: any = { id };
+		if (clientCode) {
+			criteria.clientCode = clientCode;
+		}
+		const user = await this.repository.findOneBy(criteria);
 		return user;
 	}
 }

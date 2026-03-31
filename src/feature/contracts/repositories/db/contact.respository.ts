@@ -12,15 +12,20 @@ import { SearchMeta } from "@app/core/repository/search/search.meta";
 import { SortMeta, SortOrder } from "@app/core/repository/search/sort.meta";
 import { FilterConditionsDto } from "@app/shared/dtos/filter-conditions.dto";
 import { LabelValuePair } from "@app/shared/entities/label-value-pair.view";
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { Contract } from "../../entities/contracts.entity";
 import { ContractRepository } from "../contract.repository";
 import { Filter } from "@app/core/repository/search/filter";
 import { DynamicQueryBuilder } from "@app/core/repository/search/query-builder";
+import { AsyncLocalStorage } from "async_hooks";
+import { RequestContext } from "@app/core/middleware/request_context";
 
 @Injectable()
 export class ContractDbRepository implements ContractRepository {
-    constructor (private dataSourceService: DatasourceService) { }
+    constructor (
+        private dataSourceService: DatasourceService,
+        private readonly als: AsyncLocalStorage<RequestContext>,
+    ) { }
     findByEmployeeId(employeeId: string): Promise<Contract> {
         throw new Error("Method not implemented.");
     }
@@ -37,32 +42,48 @@ export class ContractDbRepository implements ContractRepository {
 
     private repository: CustomRepository<Contract>;
 
+    private getClientCode(strict = true) {
+        const clientCode = this.als.getStore()?.getCurrentUser()?.clientCode;
+        if (!clientCode && strict) {
+            throw new UnauthorizedException('Missing client context');
+        }
+        return clientCode;
+    }
+
     private async setRepository() {
         this.repository = await this.dataSourceService.getRepository(Contract);
     }
     async findAll(): Promise<any> {
-            await this.setRepository();
-            return await this.repository.findBy({ deleted: false });
-        }
+        await this.setRepository();
+        const clientCode = this.getClientCode();
+        return await this.repository.findBy({ deleted: false, client_code: clientCode });
+    }
     async insert(entity: Contract): Promise<Contract> {
         await this.setRepository();
+        const clientCode = entity.client_code || this.getClientCode();
+        entity.client_code = clientCode;
         const contractAdd = await this.repository.insert(entity);
         return contractAdd.raw[0];
     }
     async update(entity: Partial<Contract>): Promise<Contract> {
         await this.setRepository();
-        const updatedContract = await this.repository.update({ id: entity.id }, entity);
+        const clientCode = this.getClientCode();
+        const updatedContract = await this.repository.update({ id: entity.id, client_code: clientCode }, entity);
         return updatedContract.raw[0];
     }
     async delete(entity: Contract): Promise<void> {
         await this.setRepository();
-        await this.repository.update({ id: entity.id }, entity);
+        const clientCode = this.getClientCode();
+        await this.repository.update({ id: entity.id, client_code: clientCode }, entity);
     }
     async findById(id: any): Promise<Contract> {
         await this.setRepository();
-        const savedContract = await this.repository.findOneBy({
-            id,
-        });
+        const clientCode = this.getClientCode(false);
+        const criteria: any = { id };
+        if (clientCode) {
+            criteria.client_code = clientCode;
+        }
+        const savedContract = await this.repository.findOneBy(criteria);
         return savedContract;
     }
     findAllWithFilters(filters: SearchMeta): Promise<Contract[]> {
@@ -70,7 +91,11 @@ export class ContractDbRepository implements ContractRepository {
     }
     async findTotalCountWithFilters(filters: SearchMeta): Promise<number> {
         await this.setRepository();
-        const queryBuilder = this.repository.createQueryBuilder().where("deleted = false");
+        const clientCode = this.getClientCode();
+        const queryBuilder = this.repository
+            .createQueryBuilder()
+            .where("deleted = false")
+            .andWhere("client_code = :clientCode", { clientCode });
         const dynamicBuilder = new DynamicQueryBuilder(queryBuilder).applyFilters(
             filters.filters
         );
@@ -85,19 +110,21 @@ export class ContractDbRepository implements ContractRepository {
 
     async findTotalCount(): Promise<number> {
         await this.setRepository();
+        const clientCode = this.getClientCode();
         const query = `SELECT count(id) as total FROM ${ this.repository.schema
-            }.${ Contract.getTableName() } WHERE deleted = false`;
-        const total = await this.repository.query(query);
+            }.${ Contract.getTableName() } WHERE deleted = false AND client_code = $1`;
+        const total = await this.repository.query(query, [clientCode]);
         return parseInt(total[0]?.total || 0);
     }
     async findAllLabelValuePairByIds(list: string[]): Promise<LabelValuePair[]> {
         await this.setRepository();
-        const query = `SELECT id as value, user_name as "userName",employee_id as "employeeId" from ${ this.repository.schema
-            }.${ Contract.getTableName() } where id in ( ${ list.map((id) => `'${ id }'`) } )`;
-        const usersList = await this.repository.query(query);
+        const clientCode = this.getClientCode();
+        const placeholders = list.map((_, index) => `$${ index + 2 }`).join(",");
+        const query = `SELECT id as value, contract_title as "title" from ${ this.repository.schema
+            }.${ Contract.getTableName() } where client_code = $1 and id in (${ placeholders })`;
+        const usersList = await this.repository.query(query, [clientCode, ...list]);
         return usersList?.map(
-            (data) =>
-                new LabelValuePair(data.userName + "-" + data.employeeId, data.value)
+            (data) => new LabelValuePair(data.title, data.value)
         );
     }
     async findAllAndResponseWithPagination(
@@ -105,9 +132,11 @@ export class ContractDbRepository implements ContractRepository {
         pageableInfo: any
     ): Promise<Page<Contract>> {
         await this.setRepository();
+        const clientCode = this.getClientCode();
         const queryBuilder = this.repository
             .createQueryBuilder()
-            .where("deleted = false");
+            .where("deleted = false")
+            .andWhere("client_code = :clientCode", { clientCode });
         const options: PaginationOptions = {
             columnsMap: null,
             defaultSortMeta: new SortMeta("createdAt,id", SortOrder.DESC),
@@ -120,6 +149,13 @@ export class ContractDbRepository implements ContractRepository {
 
 async autoRenewContracts(): Promise<number> {
     await this.setRepository();
+    const clientCode = this.getClientCode(false);
+    const params: any[] = [];
+    let clientCondition = '';
+    if (clientCode) {
+        clientCondition = ' AND client_code = $1';
+        params.push(clientCode);
+    }
 
     const query = `
         UPDATE ${this.repository.schema}.${Contract.getTableName()}
@@ -128,10 +164,11 @@ async autoRenewContracts(): Promise<number> {
         WHERE renewal_terms = 'Auto'
           AND deleted = false
           AND expiry_date <= CURRENT_DATE
+          ${clientCondition}
         RETURNING id;
     `;
 
-    const result = await this.repository.query(query);
+    const result = await this.repository.query(query, params);
 
     return result.length; // number of contracts renewed
 }

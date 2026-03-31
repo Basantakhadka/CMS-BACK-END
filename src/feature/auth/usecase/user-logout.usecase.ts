@@ -21,6 +21,7 @@ export class UserLogoutUsecase
 	): Promise<Result<UserLogoutUsecaseResponse>> {
 		this.userPoolService.revokeSession(
 			requestContext.getCurrentUser().userId,
+			requestContext.getCurrentUser().clientCode
 		);
 
 		const response = new UserLogoutUsecaseResponse(true);

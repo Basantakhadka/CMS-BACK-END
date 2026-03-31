@@ -17,6 +17,9 @@ export class Role implements DbEntity {
 	@TextColumn()
 	title: string;
 
+	@TextColumn({ name: "client_code" })
+	clientCode: string;
+
 	@BooleanColumn()
 	active: boolean;
 
@@ -43,11 +46,13 @@ export class Role implements DbEntity {
 
 	@JsonbColumn()
 	deletedBy: LabelValuePair;
+
 	static async mapper(data: types.ResultSet): Promise<Role[]> {
 		const newData: Role[] = [];
 		data.rows.map((item) => {
 			const role = new Role();
 			role.id = item.id;
+			role.clientCode = item.client_code;
 			role.title = item.title;
 			role.createdOn = item.created_on;
 			role.lastModifiedOn = item.last_modified_on;
@@ -66,6 +71,7 @@ export class Role implements DbEntity {
 		map.set("permissions", "permissions");
 		map.set("deleted", "deleted");
 		map.set("active", "active");
+		map.set("clientCode", "client_code");
 		return map;
 	}
 

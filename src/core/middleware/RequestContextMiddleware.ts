@@ -1,5 +1,6 @@
 import { publicRoutes, sseRoutes } from '@app/feature/common/publicRoutes';
 import {
+    BadRequestException,
     ForbiddenException,
     Injectable,
     NestMiddleware,
@@ -14,10 +15,11 @@ import { UserPoolService } from '../cache/user-pool.service';
 import { CurrentUser } from './current_user';
 import { RequestContext } from './request_context';
 import { CacheFactory } from '../cache/cache.factory';
+import { SystemsConstant } from '../constants/systems.constant';
 
 @Injectable()
 export class RequestContextMiddleware implements NestMiddleware {
-    private readonly SCHEMA = 'cms_portal';
+    private readonly SCHEMA = SystemsConstant.SHARED_KEYSPACE;
 
     constructor (
         private readonly jwtStrategy: JwtStrategy,
@@ -28,13 +30,17 @@ export class RequestContextMiddleware implements NestMiddleware {
     ) { }
 
     async use(req: Request, res: Response, next: NextFunction) {
-        const isPublicRoute = publicRoutes.some(route =>
-            req.originalUrl.includes(route),
+        const originalUrl = req.originalUrl || '';
+        const isPublicRoute = publicRoutes.some((route) =>
+            originalUrl.includes(route),
         );
+        const isSseRoute = sseRoutes.some((route) => originalUrl.includes(route));
+        const clientCode = this.getClientCodeFromHeader(req);
+        const requiresClientCode = this.requiresClientHeader(originalUrl);
 
-        const isSseRoute = sseRoutes.some(route =>
-            req.originalUrl.includes(route),
-        );
+        if (requiresClientCode && !clientCode) {
+            throw new ForbiddenException('Missing X-Client-Code header');
+        }
 
         /**
          * ==========================
@@ -58,12 +64,11 @@ export class RequestContextMiddleware implements NestMiddleware {
                 token,
                 this.userPoolService,
                 this.cacheFactory,
-                req.originalUrl,
+                originalUrl,
             );
 
             res.setHeader('X-XSRF-TOKEN', refreshedToken);
 
-            // Force CMS schema
             const currentUser = requestContext.getCurrentUser();
             Object.defineProperty(currentUser, 'schema', {
                 value: this.SCHEMA,
@@ -81,10 +86,12 @@ export class RequestContextMiddleware implements NestMiddleware {
          */
         if (isPublicRoute) {
             const currentUser = new CurrentUser(
-                '', // loginId
-                '', // userId
-                '', // fullName
-                this.SCHEMA, // readonly schema
+                '',
+                '',
+                '',
+                this.SCHEMA,
+                '',
+                clientCode,
             );
 
             const requestContext = new RequestContext(currentUser);
@@ -109,7 +116,6 @@ export class RequestContextMiddleware implements NestMiddleware {
             this.userPoolService,
         );
 
-        // Force CMS schema on CurrentUser (readonly)
         const currentUser = requestContext.getCurrentUser();
         Object.defineProperty(currentUser, 'schema', {
             value: this.SCHEMA,
@@ -118,5 +124,24 @@ export class RequestContextMiddleware implements NestMiddleware {
 
         this.als.enterWith(requestContext);
         return next();
+    }
+
+    private requiresClientHeader(originalUrl: string): boolean {
+        return originalUrl.includes('/auth/login');
+    }
+
+    private getClientCodeFromHeader(req: Request): string | undefined {
+        const rawValue =
+            (req.headers['x-client-code'] ||
+                req.headers['client-code'] ||
+                req.headers['clientcode']) as string;
+        if (!rawValue) {
+            return undefined;
+        }
+        const normalized = rawValue.trim();
+        if (!/^\d{3}$/.test(normalized)) {
+            throw new BadRequestException('Client code must be a 4 digit value');
+        }
+        return normalized;
     }
 }

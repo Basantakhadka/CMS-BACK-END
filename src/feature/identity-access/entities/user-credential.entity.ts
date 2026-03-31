@@ -13,6 +13,9 @@ export class UserCredential implements DbEntity {
 	@PrimaryTextColumn()
 	id: string;
 
+	@TextColumn({ name: "client_code" })
+	clientCode: string;
+
 	@TextColumn()
 	version: string;
 

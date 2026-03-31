@@ -1,7 +1,7 @@
 import { RequestContext } from "@app/core/middleware/request_context";
 import { Usecase } from "@app/core/usecase/usecase";
 import { Result } from "@app/feature/common/result";
-import { Inject } from "@nestjs/common";
+import { ForbiddenException, Inject } from "@nestjs/common";
 
 import { IdGenerator } from "@app/shared/id-generator";
 import { ContractRepository } from "../repositories/contract.repository";
@@ -23,9 +23,13 @@ export class AddContractUsecase
     requestContext?: RequestContext
   ): Promise<Result<AddContractUsecaseResponse>> {
 
+    const clientCode = requestContext?.getCurrentUser()?.clientCode;
+    if (!clientCode) {
+      throw new ForbiddenException('Missing client context');
+    }
+
     // 1️⃣ Generate contract ID
     const contractId = IdGenerator.generateId("v4");
-    console.log({contractId})
 
     // 2️⃣ Create Contract entity
     const contract = new Contract();
@@ -44,8 +48,7 @@ export class AddContractUsecase
     contract.amendment_date = request.amendmentDate;
     contract.amendment_link = request.amendmentLink;
     contract.termination_notice_days = request.terminationNoticeDays;
-
-    console.log({contract})
+    contract.client_code = clientCode;
 
     // Audit fields
     const loggedInUser = requestContext?.getCurrentUser()?.loginId || "SYSTEM";

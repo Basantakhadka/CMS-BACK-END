@@ -53,11 +53,11 @@ export class ContractsController {
         console.log({ createContract })
 
         const request = new AddContractUsecaseRequest(
-            createContract.title,   // contractTitle
-            createContract.type,    // contractType
-            createContract.parties,          // parties
+            createContract.title,   
+            createContract.type,   
+            createContract.parties,         
             createContract.expiryDate,  
-            createContract.contractDate,       // contractDate
+            createContract.contractDate,       
             createContract.documentLink,    // documentLink
             createContract.contractValue,   // contractValue (optional)
             createContract.jurisdiction,     // jurisdiction (optional)

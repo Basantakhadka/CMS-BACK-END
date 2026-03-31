@@ -25,6 +25,9 @@ import { UserLoginService } from "../services/user-login.service";
 import { UserLoginUsecaseRequest } from "./request/user-login.usecase.request";
 import { UserLoginUsecaseResponse } from "./response/user-login.usecase.response";
 import { JwtSignOptions } from "@nestjs/jwt";
+import { ClientDbRepository } from "@app/feature/identity-access/repositories/db/client.repository";
+import { ClientRepository } from "@app/feature/identity-access/repositories/client.repository";
+import { Client } from "@app/feature/identity-access/entities/client.entity";
 
 export class UserLoginUsecase
 	implements Usecase<UserLoginUsecaseRequest, UserLoginUsecaseResponse> {
@@ -40,7 +43,9 @@ export class UserLoginUsecase
 		private readonly jwtStrategy: JwtStrategy,
 		@Inject(UserPoolService)
 		private userLoginCacheService: UserPoolService,
-		private readonly userLoginService: UserLoginService
+		private readonly userLoginService: UserLoginService,
+		@Inject(ClientDbRepository)
+		private readonly clientRepository: ClientRepository,
 	) { }
 
 	private async updateUserCredential(userCredential: Partial<UserCredential>) {
@@ -52,10 +57,26 @@ export class UserLoginUsecase
 		return generalPolicy[0].passwordPolicy;
 	}
 
-	private async validateUser(request: UserLoginUsecaseRequest) {
-		console.log({ request })
+	private async resolveClientContext(requestContext?: RequestContext): Promise<Client> {
+		const clientCode = requestContext?.getCurrentUser()?.clientCode;
+		if (!clientCode) {
+			Result.createErrorWithMessage(
+				new BadRequestException('Client header missing for login'),
+				'Login Failed',
+			);
+		}
+		const client = await this.clientRepository.findByCode(clientCode);
+		if (!client) {
+			Result.createErrorWithMessage(
+				new BadRequestException('Client is not found'),
+				'Login Failed',
+			);
+		}
+		return client;
+	}
+
+	private async validateUser(request: UserLoginUsecaseRequest, clientCode: string) {
 		const user = await this.userRepository.findByUserId(request.username);
-		console.log({ user })
 		if (!user) {
 			Result.createErrorWithMessage(
 				new BadRequestException("Incorrect username or password"),
@@ -63,6 +84,12 @@ export class UserLoginUsecase
 			);
 		}
 		this.userData = user;
+		if (user.clientCode && user.clientCode !== clientCode) {
+			Result.createErrorWithMessage(
+				new BadRequestException('User does not belong to the requested client'),
+				'Login Failed',
+			);
+		}
 		if (!user.active) {
 			Result.createErrorWithMessage(
 				new BadRequestException(
@@ -228,11 +255,18 @@ export class UserLoginUsecase
 		requestContext?: RequestContext
 	): Promise<Result<UserLoginUsecaseResponse>> {
 
-		const { user, userCredential } = await this.validateUser(request);
+		const client = await this.resolveClientContext(requestContext);
+		const clientCode = client.clientCode;
+		console.log('Client resolved for login:', clientCode);
+
+		const { user, userCredential } = await this.validateUser(request, clientCode);
+
+		
 
 		if (
 			(await this.userLoginCacheService.isUserSessionActive(
 				user.userId,
+				clientCode
 			)) &&
 			user.userType !== "SERVICE"
 		) {
@@ -261,6 +295,7 @@ export class UserLoginUsecase
 				username: user.userId,
 				version: userCredential.version,
 				schema: requestContext.getCurrentUser().schema,
+				clientCode: clientCode,
 				enforcePasswordChange,
 				MFAStatus:
 					password?.toUpperCase() !== "MIGRATED"
@@ -280,6 +315,10 @@ export class UserLoginUsecase
 			const response = new UserLoginUsecaseResponse({
 				accessToken,
 				enforcePasswordChange,
+				client: {
+					code:clientCode,
+					name: client.clientName,
+				},
 				MFAStatus:
 					password?.toUpperCase() !== "MIGRATED"
 						? MFASTATUS.PENDING
@@ -293,6 +332,7 @@ export class UserLoginUsecase
 			userCredential,
 			requestContext,
 			enforcePasswordChange,
+			client,
 		);
 		const response = new UserLoginUsecaseResponse(loginResponse);
 		return Result.createSuccess(response);

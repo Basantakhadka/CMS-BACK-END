@@ -9,11 +9,15 @@ import {
 	BooleanColumn,
 	JsonbColumn,
 	PrimaryTextColumn,
+	TextColumn,
 } from "@app/shared/entities/entities.decorator";
 @Entity({ name: "general_policy_by_id" })
 export class GeneralPolicy implements DbEntity {
 	@PrimaryTextColumn()
 	id: string;
+
+	@TextColumn({ name: "client_code" })
+	clientCode: string;
 	@BooleanColumn()
 	active: boolean;
 	@JsonbColumn()

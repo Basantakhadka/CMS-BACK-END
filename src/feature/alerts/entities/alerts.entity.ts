@@ -44,6 +44,9 @@ export class ContractAlert {
   @Column({ type: 'boolean', default: false })
   deleted: boolean;
 
+  @Column({ name: 'client_code', type: 'text' })
+  client_code: string;
+
   static getTableName() {
     return 'cms_contract_alerts';
   }
@@ -61,6 +64,7 @@ export class ContractAlert {
     map.set('created_at', 'createdAt');
     map.set('updated_at', 'updatedAt');
     map.set('deleted', 'deleted');
+    map.set('client_code', 'clientCode');
     return map;
   }
 

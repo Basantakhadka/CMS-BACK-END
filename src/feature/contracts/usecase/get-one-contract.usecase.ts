@@ -1,7 +1,7 @@
 import { RequestContext } from "@app/core/middleware/request_context";
 import { Usecase } from "@app/core/usecase/usecase";
 import { Result } from "@app/feature/common/result";
-import { Inject, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Inject, NotFoundException } from "@nestjs/common";
 import { ContractRepository } from "../repositories/contract.repository";
 import { ContractDbRepository } from "../repositories/db/contact.respository";
 import { GetOneContractUsecaseRequest } from "./request/get-one-contract.usecase.request";
@@ -19,12 +19,14 @@ export class GetOneContractUsecase
     request: GetOneContractUsecaseRequest,
     requestContext?: RequestContext
   ): Promise<Result<GetOneContractUsecaseResponse>> {
+    const clientCode = requestContext?.getCurrentUser()?.clientCode;
+    if (!clientCode) {
+      throw new ForbiddenException('Missing client context');
+    }
 
-    // 1️⃣ Find contract by ID]
-    console.log({ request });
     const savedContract = await this.contractRepository.findById(request.id);
 
-    if (!savedContract) {
+    if (!savedContract || savedContract.client_code !== clientCode) {
       return Result.createErrorWithMessage(
         new NotFoundException(),
         `Cannot find contract with id ${request.id}`

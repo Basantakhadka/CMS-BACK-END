@@ -49,6 +49,9 @@ export class Contract {
   @Column({ type: 'boolean', default: false })
   deleted: boolean;
 
+  @Column({ name: 'client_code', type: 'text' })
+  client_code: string;
+
   @Column({ nullable: true, type: "text" })
   scope_of_work?: string;
 
@@ -86,6 +89,7 @@ export class Contract {
     map.set("amendment_date", "amendmentDate");
     map.set("amendment_link", "amendmentLink");
     map.set("termination_notice_days", "terminationNoticeDays");
+    map.set("client_code", "clientCode");
     return map;
   }
 

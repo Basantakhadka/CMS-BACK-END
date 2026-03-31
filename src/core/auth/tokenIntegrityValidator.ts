@@ -20,7 +20,8 @@ export class TokenIntegrityValidator {
 			const { version } =
 				await this.userCredentialRepository.findUserByIdWithKeyspace(
 					decodedToken["sub"],
-					decodedToken["schema"]
+					decodedToken["schema"],
+					decodedToken["clientCode"]
 				);
 			if (version !== decodedToken["version"]) {
 				throw new UnauthorizedException();

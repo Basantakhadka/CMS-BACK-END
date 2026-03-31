@@ -65,6 +65,7 @@ export class DeleteUserUsecase implements Usecase<DeleteUserUsecaseRequest, Dele
         await this.userCredentialRepository.update(newCredentials);
         this.userPoolService.revokeSession(
             user?.userId,
+            requestContext.getCurrentUser().clientCode
 
         );
     }
