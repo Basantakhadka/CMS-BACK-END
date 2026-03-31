@@ -11,6 +11,7 @@ import { UserLogoutUsecase } from "./usecase/user-logout.usecase";
 import { PermissionsCheckerService } from "./services/permissions-checker.service";
 import { UserPoolService } from "@app/core/cache/user-pool.service";
 import { changePasswordUsecase } from "./usecase/change-password.usecase";
+import { ClientDbRepository } from "../identity-access/repositories/db/client.repository";
 
 @Module({
     imports: [],
@@ -22,6 +23,7 @@ import { changePasswordUsecase } from "./usecase/change-password.usecase";
         UserCredentialDbRepository,
         RolesDbRepository,
         GeneralPolicyDbRepository,
+        ClientDbRepository,
         JwtStrategy,
         UserLogoutUsecase,
         PermissionsCheckerService,
@@ -33,6 +35,7 @@ import { changePasswordUsecase } from "./usecase/change-password.usecase";
         UserDbRepository,
         RolesDbRepository,
         UserCredentialDbRepository,
+        ClientDbRepository,
         PermissionsCheckerService,
     ],
 })

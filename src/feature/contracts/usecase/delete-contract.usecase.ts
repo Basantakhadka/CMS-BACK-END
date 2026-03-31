@@ -1,7 +1,7 @@
 import { RequestContext } from "@app/core/middleware/request_context";
 import { Usecase } from "@app/core/usecase/usecase";
 import { Result } from "@app/feature/common/result";
-import { Inject, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Inject, NotFoundException } from "@nestjs/common";
 
 import { Contract } from "../entities/contracts.entity";
 import { ContractRepository } from "../repositories/contract.repository";
@@ -22,10 +22,14 @@ export class DeleteContractUsecase
     request: DeleteContractUsecaseRequest,
     requestContext?: RequestContext
   ): Promise<Result<DeleteContractUsecaseResponse>> {
+    const clientCode = requestContext?.getCurrentUser()?.clientCode;
+    if (!clientCode) {
+      throw new ForbiddenException('Missing client context');
+    }
 
     // 1️⃣ Find the contract
     const contract = await this.contractRepository.findById(request.id);
-    if (!contract) {
+    if (!contract || contract.client_code !== clientCode) {
       throw new NotFoundException(`Contract with id ${request.id} not found`);
     }
 

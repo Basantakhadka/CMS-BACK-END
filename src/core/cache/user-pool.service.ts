@@ -11,6 +11,7 @@ const DEFAULT_TTL = 36;
 interface UserLoginCache {
 	userLoginId: string;
 	sessionId: string;
+	clientCode: string;
 
 	lastLoginDateTime?: Date;
 
@@ -25,8 +26,8 @@ const addMilliseconds = (date: Date | string, milliseconds: number) => {
 	return result;
 };
 
-export const toKey = (userId: string) =>
-	`${ userId?.toLowerCase() }`;
+export const toKey = (userId: string, clientCode: string) =>
+	`${ userId?.toLowerCase() }-${ clientCode?.toLowerCase() }`;
 
 @Injectable()
 export class UserPoolService implements OnModuleInit {
@@ -41,9 +42,9 @@ export class UserPoolService implements OnModuleInit {
 
 	constructor(private cacheServiceFactory: CacheFactory) {}
 
-	getUser(userId: string): Promise<UserLoginCache> {
+	getUser(userId: string, clientCode: string): Promise<UserLoginCache> {
 		return this.cacheServiceFactory.getCachedData(
-			toKey(userId)
+			toKey(userId,clientCode)
 		);
 	}
 
@@ -51,9 +52,9 @@ export class UserPoolService implements OnModuleInit {
 		// return this.userLoginCache.keys();
 	}
 
-	revokeSession(userId: string) {
+	revokeSession(userId: string,clientCode: string) {
 		if (userId) {
-			this.cacheServiceFactory.deleteCachedData(toKey(userId));
+			this.cacheServiceFactory.deleteCachedData(toKey(userId,clientCode));
 		}
 	}
 	deleteSession(key:string){
@@ -62,18 +63,19 @@ export class UserPoolService implements OnModuleInit {
 
 	async isUserSessionActive(
 		userId: string,
+		clientCode: string
 
 	): Promise<boolean> {
-		const user = await this.getUser(userId);
+		const user = await this.getUser(userId, clientCode);
 		return !!user;
 	}
 
 	async validateSession(
 		userId: string,
-
+		clientCode: string,
 		sessionId: string
 	) {
-		const user = await this.getUser(userId);
+		const user = await this.getUser(userId, clientCode);
 		if (!sessionId || !user || user.sessionId !== sessionId) {
 			throw new UnauthorizedException();
 		}
@@ -88,15 +90,15 @@ export class UserPoolService implements OnModuleInit {
 			sessionExpiresOn,
 		};
 		this.cacheServiceFactory.cacheData(
-			toKey(userLoginCache.userLoginId),
+			toKey(userLoginCache.userLoginId, userLoginCache.clientCode),
 			cache,
 			{ ttl: this.CACHE_CONFIG.ttl }
 		);
 	}
 
-	async refreshSession(userId: string) {
+	async refreshSession(userId: string, clientCode: string) {
 		let now = new Date();
-		const user = await this.getUser(userId);
+		const user = await this.getUser(userId, clientCode);
 		let sessionExpiresOn = addMilliseconds(
 			user.sessionExpiresOn,
 			this.CACHE_CONFIG.ttl
@@ -108,7 +110,7 @@ export class UserPoolService implements OnModuleInit {
 			lastRequestDateTime: now,
 		};
 
-		await this.cacheServiceFactory.cacheData(toKey(userId), cache, {
+		await this.cacheServiceFactory.cacheData(toKey(userId, clientCode), cache, {
 			ttl: this.CACHE_CONFIG.ttl,
 		});
 	}

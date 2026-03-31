@@ -25,11 +25,15 @@ import { GetUsersByRoleUsecase } from "./usecase/get-users-by-role.usecase";
 import { AddUserUsecase } from "./usecase/add-user.usecase";
 import { PermissionsCheckerService } from "../auth/services/permissions-checker.service";
 import { EmailHandlerModule } from "@app/shared/mailer/mailer.module";
+import { ClientsController } from "./clients.controller";
+import { AddClientUsecase } from "./usecase/add-client.usecase";
+import { ClientDbRepository } from "./repositories/db/client.repository";
+import { GetClientsUsecase } from "./usecase/get-clients.usecase";
 
 
 @Module({
 	imports: [EmailHandlerModule],
-	controllers: [UsersController, GeneralPolicyController, RolesController],
+	controllers: [UsersController, GeneralPolicyController, RolesController, ClientsController],
 	providers: [
 
 		UserDbRepository,
@@ -52,7 +56,10 @@ import { EmailHandlerModule } from "@app/shared/mailer/mailer.module";
 		GetRolesForSelectMenuUsecase,
 		RolesTotalCountUsecase,
 		GetUsersByRoleUsecase,
-		PermissionsCheckerService
+		PermissionsCheckerService,
+		ClientDbRepository,
+		AddClientUsecase,
+		GetClientsUsecase
 
 
 

@@ -3,7 +3,9 @@ export class CurrentUser {
 	readonly userId: string;
 	readonly fullName: string;
 	readonly schema?: string;
-	readonly username?: string; 
+	readonly username?: string;
+	readonly clientCode?: string;
+
 
 	constructor(
 		loginId: string,
@@ -11,12 +13,13 @@ export class CurrentUser {
 		fullName: string,
 		schema?: string,
 		username?:string,
-
+		clientCode?: string,
 	) {
 		this.loginId = loginId;
 		this.userId = userId;
 		this.fullName = fullName;
 		this.schema = schema;
+		this.clientCode = clientCode;
 		this.username = username; 
 
 	}

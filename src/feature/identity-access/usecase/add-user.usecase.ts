@@ -43,7 +43,12 @@ export class AddUserUsecase
 		requestContext?: RequestContext,
 	): Promise<Result<AddUserUsecaseResponse>> {
 
-		const loggedInUser = requestContext.getCurrentUser().loginId;
+		const currentUser = requestContext?.getCurrentUser();
+		const clientCode = currentUser?.clientCode;
+		if (!clientCode) {
+			throw new NotAcceptableException('Missing client context for user creation');
+		}
+		const loggedInUser = currentUser.loginId;
 		const user = await this.userRepository.findById(loggedInUser);
 		if(user.userId ===loggedInUser){
 			throw new NotAcceptableException(
@@ -66,6 +71,7 @@ export class AddUserUsecase
 		users.active = true;
 		users.deleted = false;
 		users.userType="SERVICE";
+		users.clientCode = clientCode;
 		users.createdBy = { label: "SYSTEM", value: loggedInUser };
 		users.createdOn = new Date();
 
@@ -95,6 +101,7 @@ export class AddUserUsecase
 			const userByRole = new UserByRole();
 			userByRole.roleId = role.value;
 			userByRole.userId = users.id;
+			userByRole.clientCode = clientCode;
 			await this.userRepository.insertUserByRole(userByRole);
 		});
 

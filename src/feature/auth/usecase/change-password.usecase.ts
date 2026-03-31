@@ -127,7 +127,7 @@ export class changePasswordUsecase
     });
 
     this.userPoolService.revokeSession(
-      requestContext.getCurrentUser().userId
+      requestContext.getCurrentUser().userId,requestContext.getCurrentUser().clientCode
     );
 
     return Result.createSuccess(

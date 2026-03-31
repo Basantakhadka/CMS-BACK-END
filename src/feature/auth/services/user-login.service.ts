@@ -8,6 +8,7 @@ import {
 	User,
 	UserByRole,
 } from "@app/feature/identity-access/entities/user.entity";
+import { Client } from "@app/feature/identity-access/entities/client.entity";
 import { GeneralPolicyDbRepository } from "@app/feature/identity-access/repositories/db/general-policy.repository";
 import { RolesDbRepository } from "@app/feature/identity-access/repositories/db/roles.repository";
 import { UserCredentialDbRepository } from "@app/feature/identity-access/repositories/db/user-credential.repository";
@@ -46,9 +47,11 @@ export class UserLoginService {
 		userCredential: UserCredential,
 		requestContext: RequestContext,
 		enforcePasswordChange: boolean,
-	
+		client: Client,
+
 	) {
 		let permissions: string[] = [];
+		const clientCode = client.clientCode;
 		const userRoles = [];
 		await Promise.all(
 			user.roles.map(async (role: { label: string; value: string }) => {
@@ -72,6 +75,7 @@ export class UserLoginService {
 			version: userCredential.version,
 			schema: requestContext.getCurrentUser().schema,
 			enforcePasswordChange,
+			clientCode,
 			
 			sessionId,
 		};
@@ -87,6 +91,7 @@ export class UserLoginService {
 			this.userLoginCacheService.cacheUserLogin({
 				userLoginId: user.userId,
 				sessionId,
+				clientCode
 			});
 		}
 
@@ -95,6 +100,10 @@ export class UserLoginService {
 			permissions: !enforcePasswordChange ? permissions : [],
 			accessToken,
 			enforcePasswordChange,
+			client: {
+				code: client.clientCode,
+				name: client.clientName,
+			},
 
 		};
 

@@ -2,8 +2,8 @@ import { EnumType } from "./enum-type.constant";
 
 export class InstitutionCodePrefixType extends EnumType<InstitutionCodePrefixType> {
 	public static readonly PREFIX = new InstitutionCodePrefixType(
-		"institution",
-		"institution"
+		"client",
+		"client"
 	);
 	private static dbGroupName = process.env.DB_GROUP_NAME
 		? process.env.DB_GROUP_NAME + "_"
@@ -29,9 +29,9 @@ export class InstitutionCodePrefixType extends EnumType<InstitutionCodePrefixTyp
 		return null;
 	}
 
-	public static getSchema(institutionCode: string) {
-		if (institutionCode) {
-			const keyspace = `${this.dbGroupName}${this.PREFIX.displayName}_${institutionCode}`;
+	public static getSchema(clientCode: string) {
+		if (clientCode) {
+			const keyspace = `${this.dbGroupName}${this.PREFIX.displayName}_${clientCode}`;
 			return keyspace.toLowerCase();
 		} else {
 			return null;

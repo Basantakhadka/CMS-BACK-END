@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { SystemsConstant } from '../constants/systems.constant';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      schema: 'cms_portal', // <-- important!
+      schema: SystemsConstant.SHARED_KEYSPACE,
       namingStrategy: new SnakeNamingStrategy(),
       migrations: ['dist/migrations/*.js'],
       synchronize: false,

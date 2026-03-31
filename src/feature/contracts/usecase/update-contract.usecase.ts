@@ -1,7 +1,7 @@
 import { RequestContext } from "@app/core/middleware/request_context";
 import { Usecase } from "@app/core/usecase/usecase";
 import { Result } from "@app/feature/common/result";
-import { Inject, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Inject, NotFoundException } from "@nestjs/common";
 
 import { ContractRepository } from "../repositories/contract.repository";
 import { UpdateContractUsecaseRequest } from "./request/update-contract.usecase.request";
@@ -21,10 +21,15 @@ export class UpdateContractUsecase
     requestContext?: RequestContext
   ): Promise<Result<UpdateContractUsecaseResponse>> {
 
+    const clientCode = requestContext?.getCurrentUser()?.clientCode;
+    if (!clientCode) {
+      throw new ForbiddenException('Missing client context');
+    }
+
     // 1️⃣ Find existing contract by ID
     const existingContract = await this.contractRepository.findById(request.id);
 
-    if (!existingContract) {
+    if (!existingContract || existingContract.client_code !== clientCode) {
       throw new NotFoundException(`Contract with id ${request.id} not found`);
     }
 
@@ -42,6 +47,7 @@ export class UpdateContractUsecase
     existingContract.amendment_date = request.amendmentDate ?? existingContract.amendment_date;
     existingContract.amendment_link = request.amendmentLink ?? existingContract.amendment_link;
     existingContract.termination_notice_days = request.terminationNoticeDays ?? existingContract.termination_notice_days;
+    existingContract.client_code = clientCode;
 
     // Audit fields
     const loggedInUser = requestContext?.getCurrentUser()?.loginId || "SYSTEM";

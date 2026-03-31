@@ -1,89 +1,68 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { DataSource, ObjectLiteral, Repository } from 'typeorm';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { entities } from '@app/shared/entities';
-import { UserCredential } from '@app/feature/identity-access/entities/user-credential.entity';
+import { entities } from "@app/shared/entities";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { AsyncLocalStorage } from "async_hooks";
+import { DataSource, ObjectLiteral, Repository } from "typeorm";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import { RequestContext } from "../middleware/request_context";
+import { SystemsConstant } from "../constants/systems.constant";
 
 type Entity<T extends ObjectLiteral> = new (...args: any[]) => T;
-
 export interface CustomRepository<T> extends Repository<T> {
-  findAll(arg0: { where: { title: string; }; }): import("../../feature/identity-access/entities/roles.entity").Role | PromiseLike<import("../../feature/identity-access/entities/roles.entity").Role>;
-  schema: string;
+  schema?: string;
 }
-
 @Injectable()
 export class DatasourceService implements OnModuleInit {
-  private dataSource: DataSource;
-  private readonly schema = 'cms_portal'; // <-- your single schema
+  constructor(private readonly als: AsyncLocalStorage<RequestContext>) {}
   connections: Record<string, DataSource> = {};
   async onModuleInit() {
-    await this.initializeDatasource();
+    await this.createDatasource(SystemsConstant.SHARED_KEYSPACE);
   }
-
-  /**
-   * Initialize the single DataSource if not already initialized
-   */
-  private async initializeDatasource(): Promise<DataSource> {
-    if (this.dataSource?.isInitialized) {
-      return this.dataSource;
-    }
-
+  async createDatasource(schema: string) {
     try {
-      this.dataSource = new DataSource({
-        type: 'postgres',
+      const dataSource = new DataSource({
+        type: "postgres",
         host: process.env.DB_HOST,
-        port: Number(process.env.DB_PORT),
+        port: +process.env.DB_PORT,
         username: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
-
-        schema: this.schema,
-        name: this.schema, // DataSource name (optional if single schema)
-
-        entities,
+        schema,
+        name: schema,
+        entities: entities,
         namingStrategy: new SnakeNamingStrategy(),
-
-        synchronize: false,
-        logging: process.env.NODE_ENV !== 'production',
       });
-
-      await this.dataSource.initialize();
-      Logger.log(`Connected to PostgreSQL schema: ${ this.schema }`);
-
-      return this.dataSource;
+      if (!this.connections[schema]) {
+        this.connections[schema] = dataSource;
+        await this.connections[schema].initialize();
+      }
+      return this.connections[schema];
     } catch (err) {
-      Logger.error(`Database connection failed for schema ${ this.schema }`, err.stack);
-      throw err;
+      const errorTimeout = setInterval(async () => {
+        Logger.error(
+          `Database connection failed for schema ${schema}! -- ${err.name} - ${err.message}`
+        );
+      }, 2000);
+      setTimeout(() => {
+        clearTimeout(errorTimeout);
+      }, 10000);
     }
   }
 
-  /**
-   * Get repository for an entity
-   */
   async getRepository<T extends ObjectLiteral>(
-    entity: Entity<T>, schema?: string
-  ): Promise<CustomRepository<T>> {
-    const ds = await this.initializeDatasource();
-    const repository = ds.getRepository<T>(entity) as CustomRepository<T>;
-    repository.schema = this.schema;
-    return repository;
-  }
-
-  /**
-   * Get the DataSource instance
-   */
-  getDataSource(): DataSource {
-    if (!this.dataSource?.isInitialized) {
-      throw new Error('Datasource not initialized yet');
+    entity: Entity<T>,
+    schema?: string
+  ) {
+    const contextSchema = schema || this.als.getStore()["currentUser"].schema;
+    console.log({schema})
+    if (!this.connections[contextSchema]) {
+      await this.createDatasource(contextSchema);
     }
-    return this.dataSource;
+    const respository: CustomRepository<T> =
+      this.connections[contextSchema].getRepository<T>(entity);
+    respository.schema = contextSchema;
+    return respository;
   }
-
-  /**
-   * Create or return the initialized DataSource
-   * For middleware usage
-   */
-  async createDatasource(): Promise<DataSource> {
-    return await this.initializeDatasource();
+  async getDataSources() {
+    return this.connections;
   }
 }

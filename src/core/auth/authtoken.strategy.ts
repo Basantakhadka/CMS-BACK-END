@@ -52,7 +52,7 @@ export class AuthTokenStrategy {
 				decodedToken["fullName"],
 				decodedToken["schema"],
 				decodedToken["username"],
-
+				decodedToken["clientCode"],
 			);
 			// await tokenIntegrityValidator.validateToken(decodedToken);
 
@@ -62,11 +62,13 @@ export class AuthTokenStrategy {
 			) {
 				await userPoolService.validateSession(
 					decodedToken["userId"],
-					decodedToken["sessionId"]
+					decodedToken["sessionId"],
+					decodedToken["clientCode"],
 				);
 
 				await userPoolService.refreshSession(
 					decodedToken["userId"],
+					decodedToken["clientCode"],
 
 				);
 			}
@@ -82,6 +84,7 @@ export class AuthTokenStrategy {
 				if (decodedToken) {
 					userPoolService.revokeSession(
 						decodedToken["userId"],
+						decodedToken["clientCode"]
 
 					);
 				}
@@ -123,6 +126,7 @@ export class AuthTokenStrategy {
 				fullName: decodedToken["fullName"],
 				roles: decodedToken["roles"],
 				username: decodedToken["username"],
+				clientCode: decodedToken["clientCode"],
 				schema: decodedToken["schema"],
 				enforcePasswordChange: decodedToken["enforcePasswordChange"],
 				MFAStatus: decodedToken["MFAStatus"],
@@ -163,5 +167,5 @@ export class AuthTokenStrategy {
 				"Token expired or invalid. Unauthorized!"
 			);
 		}
-	}
+	}type="password"
 }

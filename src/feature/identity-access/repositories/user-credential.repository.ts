@@ -3,5 +3,5 @@ import { UserCredential } from "../entities/user-credential.entity";
 
 export interface UserCredentialRepository
 	extends BaseRepository<UserCredential, string> {
-	findUserByIdWithKeyspace(id: string, keyspace: string): Promise<UserCredential>;
+	findUserByIdWithKeyspace(id: string, keyspace: string, clientCode?: string): Promise<UserCredential>;
 }

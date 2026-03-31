@@ -53,6 +53,9 @@ export class User implements DbEntity {
 	@TextColumn()
 	userType: string;
 
+	@TextColumn({ name: "client_code" })
+	clientCode: string;
+
 	static getTableName() {
 		return "cms_iam_user";
 	}
@@ -60,6 +63,7 @@ export class User implements DbEntity {
 		let map = new Map();
 		map.set("userId", "user_id");
 		map.set("userName", "user_name");
+		map.set("clientCode", "client_code");
 		return map;
 	}
 	getClusterColumns?(): string[] {
@@ -72,4 +76,6 @@ export class UserByRole {
 	roleId: any;
 	@PrimaryTextColumn("user_id")
 	userId: string;
+	@TextColumn({ name: "client_code" })
+	clientCode: string;
 }

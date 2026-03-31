@@ -2,7 +2,7 @@
 import { RequestContext } from "@app/core/middleware/request_context";
 import { Usecase } from "@app/core/usecase/usecase";
 import { Result } from "@app/feature/common/result";
-import { Inject, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Inject, NotFoundException } from "@nestjs/common";
 import { UpdateContractAlertUsecaseRequest } from "./request/update-contract-alert.usecase.request";
 import { UpdateContractAlertUsecaseResponse } from "./response/update-contract-alert.usecase.response";
 import { ContractAlertsDbRepository } from "../repositories/db/alerts.repository";
@@ -20,11 +20,15 @@ export class UpdateContractAlertUsecase
     request: UpdateContractAlertUsecaseRequest,
     requestContext?: RequestContext
   ): Promise<Result<UpdateContractAlertUsecaseResponse>> {
+    const clientCode = requestContext?.getCurrentUser()?.clientCode;
+    if (!clientCode) {
+      throw new ForbiddenException('Missing client context');
+    }
 
     // 1️⃣ Find existing alert by ID
     const existingAlert = await this.contractAlertRepository.findById(request.id);
 
-    if (!existingAlert) {
+    if (!existingAlert || existingAlert.client_code !== clientCode) {
       throw new NotFoundException(`Contract alert with id ${request.id} not found`);
     }
 
@@ -41,6 +45,7 @@ export class UpdateContractAlertUsecase
         : existingAlert.stakeholders
     );
     existingAlert.deleted = request.deleted ?? existingAlert.deleted;
+    existingAlert.client_code = clientCode;
 
     // Audit field
     const loggedInUser = requestContext?.getCurrentUser()?.loginId || "SYSTEM";

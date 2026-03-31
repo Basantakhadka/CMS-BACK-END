@@ -27,7 +27,12 @@ export class UpdateUserUsecase implements Usecase<UpdateUserUsecaseRequest, Upda
         @Inject(UserPoolService) private userPoolService?: UserPoolService,
     ) { }
     async execute(request: UpdateUserUsecaseRequest, requestContext?: RequestContext): Promise<Result<UpdateUserUsecaseResponse>> {
-        const loggedInUser = requestContext.getCurrentUser().loginId;
+        const currentUser = requestContext?.getCurrentUser();
+        const clientCode = currentUser?.clientCode;
+        if (!clientCode) {
+            throw new ForbiddenException('Missing client context');
+        }
+        const loggedInUser = currentUser.loginId;
 
         // if (loggedInUser === request.id) Result.createError(new ForbiddenException("User cannot modify itself!"));
         await this.validateSavedUser(request.id);
@@ -47,11 +52,13 @@ export class UpdateUserUsecase implements Usecase<UpdateUserUsecaseRequest, Upda
         user.userType='SERVICE';
         user.userName = request.userName;
         user.active = request.active;
+        user.clientCode = clientCode;
         await this.userRepository.update(user);
         user.roles.forEach(async (role) => {
             const userByRole = new UserByRole();
             userByRole.roleId = role.value;
             userByRole.userId = user.id;
+            userByRole.clientCode = clientCode;
             await this.userRepository.insertUserByRole(userByRole);
         });
         // if user role has changed then revoke session
@@ -115,6 +122,7 @@ export class UpdateUserUsecase implements Usecase<UpdateUserUsecaseRequest, Upda
         await this.userCredentialRepository.update(newCredentials);
         this.userPoolService.revokeSession(
             request?.userId,
+            requestContext.getCurrentUser().clientCode
 
         );
     }

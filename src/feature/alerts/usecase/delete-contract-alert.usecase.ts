@@ -2,7 +2,7 @@
 import { RequestContext } from "@app/core/middleware/request_context";
 import { Usecase } from "@app/core/usecase/usecase";
 import { Result } from "@app/feature/common/result";
-import { Inject, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Inject, NotFoundException } from "@nestjs/common";
 
 import { DeleteContractAlertUsecaseRequest } from "./request/delete-contract-alert.usecase.request";
 import { DeleteContractAlertUsecaseResponse } from "./response/delete-contract-alert.usecase.response";
@@ -21,10 +21,14 @@ export class DeleteContractAlertUsecase
     request: DeleteContractAlertUsecaseRequest,
     requestContext?: RequestContext
   ): Promise<Result<DeleteContractAlertUsecaseResponse>> {
+    const clientCode = requestContext?.getCurrentUser()?.clientCode;
+    if (!clientCode) {
+      throw new ForbiddenException('Missing client context');
+    }
 
     // 1️⃣ Find the alert
     const alert = await this.contractAlertRepository.findById(request.id);
-    if (!alert) {
+    if (!alert || alert.client_code !== clientCode) {
       throw new NotFoundException(`Contract alert with id ${request.id} not found`);
     }
 
