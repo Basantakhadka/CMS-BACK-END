@@ -21,7 +21,6 @@ export class GetAllRoleUsecase implements Usecase<GetRoleUsecaseRequest, GetRole
     ) { }
     async execute(request?: GetRoleUsecaseRequest, requestContext?: RequestContext): Promise<Result<GetRoleUsecaseResponse>> {
         let pageInfo = request.data.pageInfo;
-        console.log({ request })
 
         if (pageInfo.current !== 1) {
             Result.createError(new BadRequestException("Invalid Request"));

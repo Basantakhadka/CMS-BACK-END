@@ -22,7 +22,6 @@ export class GetContractsForSelectMenuUsecase implements Usecase<GetItemsForSele
 
         // 1️⃣ Fetch all contracts
         const contracts = await this.contractRepository.findAll();
-        console.log({ contracts });
 
         let contractsList: SelectMenu[] = [];
 

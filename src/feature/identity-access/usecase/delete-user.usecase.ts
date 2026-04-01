@@ -27,15 +27,12 @@ export class DeleteUserUsecase implements Usecase<DeleteUserUsecaseRequest, Dele
     ) { }
     async execute(request: DeleteUserUsecaseRequest, requestContext?: RequestContext): Promise<Result<DeleteUserUsecaseResponse>> {
         const loggedInUser = requestContext.getCurrentUser().loginId;
-        console.log({ loggedInUser })
         const user = await this.userRepository.findById(request.id);
-        console.log({ user })
 
         if (loggedInUser === request.id) Result.createError(new ForbiddenException("User cannot delete itself!"));
 
 
         const savedUser = await this.userRepository.findById(user.id);
-        console.log({ savedUser })
         savedUser.deleted = true;
         await this.userRepository.update(savedUser);
         savedUser.roles.forEach(

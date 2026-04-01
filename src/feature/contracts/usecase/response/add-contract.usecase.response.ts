@@ -1,5 +1,5 @@
 import { UsecaseResponse } from "@app/core/usecase/usecase.response";
 
 export class AddContractUsecaseResponse implements UsecaseResponse {
-    constructor () { }
+    constructor (public readonly requestId: string) { }
 }

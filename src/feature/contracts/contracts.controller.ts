@@ -29,6 +29,15 @@ import { GetContractsListUsecase } from "./usecase/get-contractList.usecase";
 import { GetOneContractUsecaseRequest } from "./usecase/request/get-one-contract.usecase.request";
 import { GetOneContractUsecase } from "./usecase/get-one-contract.usecase";
 import {  GetContractsForSelectMenuUsecase } from "./usecase/get-contract-dropdown.usecase";
+import { GetContractChangeRequestListUsecase } from "./usecase/get-contract-change-requests.usecase";
+import { GetContractChangeRequestListUsecaseRequest } from "./usecase/request/get-contract-change-requests.usecase.request";
+import { GetContractChangeRequestDetailsUsecase } from "./usecase/get-contract-change-request.usecase";
+import { GetContractChangeRequestDetailsUsecaseRequest } from "./usecase/request/get-contract-change-request.usecase.request";
+import { ApproveContractChangeRequestUsecase } from "./usecase/approve-contract-change-request.usecase";
+import { ApproveContractChangeRequestUsecaseRequest } from "./usecase/request/approve-contract-change-request.usecase.request";
+import { RejectContractChangeRequestUsecase } from "./usecase/reject-contract-change-request.usecase";
+import { RejectContractChangeRequestUsecaseRequest } from "./usecase/request/reject-contract-change-request.usecase.request";
+import { ContractChangeRequestActionDto, RejectContractChangeRequestDto } from "./dtos/contract-change-request-action.dto";
 
 
 
@@ -43,6 +52,10 @@ export class ContractsController {
         private readonly getOneContractUsecase:GetOneContractUsecase,
         private readonly updateContractUsecase: UpdateContractUsecase,
         private readonly getContractDropdownUsecase: GetContractsForSelectMenuUsecase,
+        private readonly getContractChangeRequestListUsecase: GetContractChangeRequestListUsecase,
+        private readonly getContractChangeRequestDetailsUsecase: GetContractChangeRequestDetailsUsecase,
+        private readonly approveContractChangeRequestUsecase: ApproveContractChangeRequestUsecase,
+        private readonly rejectContractChangeRequestUsecase: RejectContractChangeRequestUsecase,
 
         private readonly als: AsyncLocalStorage<RequestContext>
     ) { }
@@ -50,7 +63,6 @@ export class ContractsController {
     @Post("/add")
     async saveContract(@Body() body: CreateContractDto) {
         const createContract: CreateContractDto = body;
-        console.log({ createContract })
 
         const request = new AddContractUsecaseRequest(
             createContract.title,   
@@ -77,13 +89,43 @@ export class ContractsController {
     async getContract(@Body() body: FilterConditionsDto) {
         const filterConditions: FilterConditionsDto = body;
         const request = new GetContractListUsecaseRequest(filterConditions);
-        return await this.getContractListUsecase.execute(request);
+        return await this.getContractListUsecase.execute(request, this.als.getStore());
+    }
+
+    @Post("/change-requests/list")
+    async getContractChangeRequests(@Body() body: FilterConditionsDto) {
+        const request = new GetContractChangeRequestListUsecaseRequest(body);
+        return await this.getContractChangeRequestListUsecase.execute(request, this.als.getStore());
+    }
+
+    @Get("/change-requests/:id")
+    async getContractChangeRequest(@Param("id") id: string) {
+        const request = new GetContractChangeRequestDetailsUsecaseRequest(id);
+        return await this.getContractChangeRequestDetailsUsecase.execute(request, this.als.getStore());
+    }
+
+    @Post("/change-requests/:id/approve")
+    async approveContractChangeRequest(
+        @Param("id") id: string,
+        @Body() body: ContractChangeRequestActionDto,
+    ) {
+        const request = new ApproveContractChangeRequestUsecaseRequest(id, body?.remarks);
+        return await this.approveContractChangeRequestUsecase.execute(request, this.als.getStore());
+    }
+
+    @Post("/change-requests/:id/reject")
+    async rejectContractChangeRequest(
+        @Param("id") id: string,
+        @Body() body: RejectContractChangeRequestDto,
+    ) {
+        const request = new RejectContractChangeRequestUsecaseRequest(id, body.remarks);
+        return await this.rejectContractChangeRequestUsecase.execute(request, this.als.getStore());
     }
 
     @Get("/:id")
     async getOneContract(@Param("id") id: string) {
         const request = new GetOneContractUsecaseRequest(id);
-        return await this.getOneContractUsecase.execute(request);
+        return await this.getOneContractUsecase.execute(request, this.als.getStore());
     }
 
     @Put("/:id")
