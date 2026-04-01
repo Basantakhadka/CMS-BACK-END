@@ -17,7 +17,7 @@ export class Client implements DbEntity {
     static getTableName() {
         return "cms_client";
     }
-
+   
     getTableName?(): string {
         return Client.getTableName();
     }

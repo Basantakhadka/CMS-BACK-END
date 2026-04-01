@@ -1,6 +1,7 @@
 import { Type } from "class-transformer";
 import {
   IsBoolean,
+  IsNumber,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -109,6 +110,38 @@ export class OTPSetting {
   resendInterval: string = "0";
 }
 export class PasswordPolicy {
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  minLength?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  maxLength?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  expiryDays?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  requireNumbers?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  requireLowercase?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  requireUppercase?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  requireSpecialChars?: boolean;
+
   @IsNotEmpty()
   @Matches(/^[0-9]+(\.[0-9]+)?$/, {
     message: "Minimum length must be valid number",

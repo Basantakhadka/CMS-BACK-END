@@ -62,8 +62,8 @@ export class AuthTokenStrategy {
 			) {
 				await userPoolService.validateSession(
 					decodedToken["userId"],
-					decodedToken["sessionId"],
 					decodedToken["clientCode"],
+					decodedToken["sessionId"],
 				);
 
 				await userPoolService.refreshSession(
