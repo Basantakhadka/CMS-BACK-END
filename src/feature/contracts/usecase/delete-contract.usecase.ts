@@ -3,19 +3,26 @@ import { Usecase } from "@app/core/usecase/usecase";
 import { Result } from "@app/feature/common/result";
 import { ForbiddenException, Inject, NotFoundException } from "@nestjs/common";
 
-import { Contract } from "../entities/contracts.entity";
 import { ContractRepository } from "../repositories/contract.repository";
 import { ContractDbRepository } from "../repositories/db/contact.respository";
 
 import { DeleteContractUsecaseRequest } from "./request/delete-contract.usecase.request";
 import { DeleteContractUsecaseResponse } from "./response/delete-contract.usecase.response";
+import { ContractChangeRequestDbRepository } from "../repositories/db/contract-change-request.db.repository";
+import { ContractChangeRequestRepository } from "../repositories/contract-change-request.repository";
+import { ContractChangeRequest } from "../entities/contract-change-request.entity";
+import { ContractChangeRequestStatus, ContractChangeRequestType } from "../constants/change-request.constants";
+import { sanitizeContractEntity } from "../utils/contract-change-request.util";
+import { IdGenerator } from "@app/shared/id-generator";
 
 export class DeleteContractUsecase
   implements Usecase<DeleteContractUsecaseRequest, DeleteContractUsecaseResponse>
 {
   constructor(
       @Inject(ContractDbRepository)
-    private readonly contractRepository: ContractRepository
+    private readonly contractRepository: ContractRepository,
+    @Inject(ContractChangeRequestDbRepository)
+    private readonly changeRequestRepository: ContractChangeRequestRepository,
   ) {}
 
   async execute(
@@ -33,19 +40,25 @@ export class DeleteContractUsecase
       throw new NotFoundException(`Contract with id ${request.id} not found`);
     }
 
-    // 2️⃣ Soft delete: mark deleted
-    contract.deleted = true; // Make sure your Contract entity has `deleted` boolean column
-    contract.updated_at = new Date();
+    const oldData = sanitizeContractEntity(contract);
+    const snapshot = oldData ?? { id: contract.id, client_code: clientCode, deleted: contract.deleted };
+    const changeRequest = new ContractChangeRequest();
+    changeRequest.id = IdGenerator.generateId("v4");
+    changeRequest.contract_id = contract.id;
+    changeRequest.change_type = ContractChangeRequestType.DELETE;
+    changeRequest.status = ContractChangeRequestStatus.PENDING;
+    changeRequest.requested_by = requestContext?.getCurrentUser()?.loginId || "SYSTEM";
+    changeRequest.requested_at = new Date();
+    changeRequest.old_data = oldData ?? undefined;
+    changeRequest.new_data = { ...snapshot, deleted: true };
+    changeRequest.client_code = clientCode;
 
-    await this.contractRepository.update(contract);
+    await this.changeRequestRepository.insert(changeRequest);
 
-    // 3️⃣ Optionally, perform additional cleanup if needed (like audit)
-
-    // 4️⃣ Return response
-    const response = new DeleteContractUsecaseResponse(request.id);
+    const response = new DeleteContractUsecaseResponse(contract.id, changeRequest.id);
     return Result.createSuccessWithMessage(
       response,
-      "Contract soft-deleted successfully"
+      "Contract delete request submitted for approval"
     );
   }
 }

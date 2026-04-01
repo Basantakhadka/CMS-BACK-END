@@ -4,18 +4,20 @@ import { Result } from "@app/feature/common/result";
 import { ForbiddenException, Inject } from "@nestjs/common";
 
 import { IdGenerator } from "@app/shared/id-generator";
-import { ContractRepository } from "../repositories/contract.repository";
 import { AddContractUsecaseRequest } from "./request/add-contract.usecase.request";
 import { AddContractUsecaseResponse } from "./response/add-contract.usecase.response";
-import { Contract } from "../entities/contracts.entity";
-import { ContractDbRepository } from "../repositories/db/contact.respository";
+import { ContractChangeRequest } from "../entities/contract-change-request.entity";
+import { ContractChangeRequestStatus, ContractChangeRequestType } from "../constants/change-request.constants";
+import { ContractChangeRequestDbRepository } from "../repositories/db/contract-change-request.db.repository";
+import { ContractChangeRequestRepository } from "../repositories/contract-change-request.repository";
+import { buildCreateSnapshot } from "../utils/contract-change-request.util";
 
 export class AddContractUsecase
   implements Usecase<AddContractUsecaseRequest, AddContractUsecaseResponse> 
 {
   constructor(
-    @Inject(ContractDbRepository)
-    private readonly contractRepository: ContractRepository
+    @Inject(ContractChangeRequestDbRepository)
+    private readonly changeRequestRepository: ContractChangeRequestRepository,
   ) {}
 
   async execute(
@@ -28,42 +30,24 @@ export class AddContractUsecase
       throw new ForbiddenException('Missing client context');
     }
 
-    // 1️⃣ Generate contract ID
-    const contractId = IdGenerator.generateId("v4");
+    const snapshot = buildCreateSnapshot(request, clientCode);
+    const changeRequest = new ContractChangeRequest();
+    changeRequest.id = IdGenerator.generateId("v4");
+    changeRequest.contract_id =IdGenerator.generateId("v4");
+    changeRequest.change_type = ContractChangeRequestType.CREATE;
+    changeRequest.status = ContractChangeRequestStatus.PENDING;
+    changeRequest.requested_by = requestContext?.getCurrentUser()?.userId || "SYSTEM";
+    changeRequest.requested_at = new Date();
+    changeRequest.new_data = snapshot;
+    changeRequest.client_code = clientCode;
 
-    // 2️⃣ Create Contract entity
-    const contract = new Contract();
-    contract.id = contractId;
-    contract.contract_title = request.title;
-    contract.contract_type = request.type;
-    contract.parties = request.parties;
-    contract.expiry_date = request.expiryDate;
-    contract.contract_date = request.contractDate;
-    contract.document_link = request.documentLink;
-    contract.contract_value = request.contractValue;
-    contract.jurisdiction = request.jurisdiction;
-    contract.renewal_terms = request.renewalTerms;
-    contract.governing_law = request.governingLaw;
-    contract.scope_of_work = request.scopeOfWork;
-    contract.amendment_date = request.amendmentDate;
-    contract.amendment_link = request.amendmentLink;
-    contract.termination_notice_days = request.terminationNoticeDays;
-    contract.client_code = clientCode;
+    await this.changeRequestRepository.insert(changeRequest);
 
-    // Audit fields
-    const loggedInUser = requestContext?.getCurrentUser()?.loginId || "SYSTEM";
-    contract.created_at = new Date();
-    contract.updated_at = new Date();
-
-    // 3️⃣ Save to DB
-    await this.contractRepository.insert(contract);
-
-    // 4️⃣ Return response
-    const response = new AddContractUsecaseResponse();
+    const response = new AddContractUsecaseResponse(changeRequest.id);
 
     return Result.createSuccessWithMessage(
       response,
-      "Contract created successfully"
+      "Contract change request submitted for approval"
     );
   }
 }

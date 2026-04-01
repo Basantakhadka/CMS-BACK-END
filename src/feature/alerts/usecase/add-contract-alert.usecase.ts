@@ -31,7 +31,6 @@ export class AddContractAlertUsecase
 
     // 1️⃣ Generate alert ID
     const alertId = IdGenerator.generateId("v4");
-    console.log({ alertId });
 
     // 2️⃣ Create ContractAlert entity
     const alert = new ContractAlert();

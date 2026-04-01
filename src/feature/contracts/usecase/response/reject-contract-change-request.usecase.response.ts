@@ -1,8 +1,7 @@
 import { UsecaseResponse } from "@app/core/usecase/usecase.response";
 
-export class DeleteContractUsecaseResponse implements UsecaseResponse {
+export class RejectContractChangeRequestUsecaseResponse implements UsecaseResponse {
     constructor (
-        public readonly contractId: string,
         public readonly requestId: string,
     ) { }
 }

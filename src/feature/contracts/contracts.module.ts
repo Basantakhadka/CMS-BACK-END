@@ -13,6 +13,11 @@ import { GetContractsListUsecase } from "./usecase/get-contractList.usecase";
 import { GetOneContractUsecase } from "./usecase/get-one-contract.usecase";
 import {  GetContractsForSelectMenuUsecase } from "./usecase/get-contract-dropdown.usecase";
 import { ContractAutoRenewCronUsecase } from "./usecase/auto-renewal-contract-cron.usecase";
+import { ContractChangeRequestDbRepository } from "./repositories/db/contract-change-request.db.repository";
+import { GetContractChangeRequestListUsecase } from "./usecase/get-contract-change-requests.usecase";
+import { GetContractChangeRequestDetailsUsecase } from "./usecase/get-contract-change-request.usecase";
+import { ApproveContractChangeRequestUsecase } from "./usecase/approve-contract-change-request.usecase";
+import { RejectContractChangeRequestUsecase } from "./usecase/reject-contract-change-request.usecase";
 
 
 @Module({
@@ -22,6 +27,7 @@ import { ContractAutoRenewCronUsecase } from "./usecase/auto-renewal-contract-cr
         PermissionsCheckerService,
         UserDbRepository,
         ContractDbRepository,
+        ContractChangeRequestDbRepository,
         AddContractUsecase,
         RolesDbRepository,
         UpdateContractUsecase,
@@ -29,7 +35,11 @@ import { ContractAutoRenewCronUsecase } from "./usecase/auto-renewal-contract-cr
         GetContractsListUsecase,
         GetOneContractUsecase,
         GetContractsForSelectMenuUsecase,
-        ContractAutoRenewCronUsecase
+        ContractAutoRenewCronUsecase,
+        GetContractChangeRequestListUsecase,
+        GetContractChangeRequestDetailsUsecase,
+        ApproveContractChangeRequestUsecase,
+        RejectContractChangeRequestUsecase
 
 
 

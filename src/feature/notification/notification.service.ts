@@ -47,7 +47,6 @@ export class EmailService {
 			properties.emailProperties,
 			mailConfig
 		);
-		console.log("EMAIL RESPONSE =========>", emailResponse);
 
 		if (emailResponse.success) {
 			Logger.debug(

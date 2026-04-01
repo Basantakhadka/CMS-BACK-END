@@ -1,5 +1,6 @@
 import { ContractAlert } from "@app/feature/alerts/entities/alerts.entity";
 import { Contract } from "@app/feature/contracts/entities/contracts.entity";
+import { ContractChangeRequest } from "@app/feature/contracts/entities/contract-change-request.entity";
 import { Client } from "@app/feature/identity-access/entities/client.entity";
 import { GeneralPolicy } from "@app/feature/identity-access/entities/general-policy.entity";
 import { Role } from "@app/feature/identity-access/entities/roles.entity";
@@ -15,6 +16,8 @@ export const entities = [
     GeneralPolicy,
     Role,
     Contract,
+    ContractChangeRequest,
     ContractAlert,
-    SettingsNotificationsByType
+    SettingsNotificationsByType,
+    
 ];
