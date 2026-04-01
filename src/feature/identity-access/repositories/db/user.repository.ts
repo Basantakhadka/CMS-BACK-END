@@ -74,7 +74,7 @@ export class UserDbRepository implements UserRepository {
 	}
 	async findByUserId(userId: string): Promise<any> {
 		await this.setRepository();
-		const clientCode = this.getClientCode(false);
+		const clientCode = this.getClientCode();
 		const criteria: any = { userId, deleted: false };
 		if (clientCode) {
 			criteria.clientCode = clientCode;
@@ -84,7 +84,7 @@ export class UserDbRepository implements UserRepository {
 	}
 	async findActiveUserID(userId: string): Promise<User> {
 		await this.setRepository();
-		const clientCode = this.getClientCode(false);
+		const clientCode = this.getClientCode();
 		const criteria: any = { userId, deleted: false };
 		if (clientCode) {
 			criteria.clientCode = clientCode;

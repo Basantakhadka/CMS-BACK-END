@@ -53,7 +53,7 @@ export class UserCredentialDbRepository implements UserCredentialRepository {
 	}
 	async findById(id: string): Promise<UserCredential> {
 		await this.setRepository();
-		const clientCode = this.getClientCode(false);
+		const clientCode = this.getClientCode();
 		const criteria: any = { id };
 		if (clientCode) {
 			criteria.clientCode = clientCode;

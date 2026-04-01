@@ -109,6 +109,7 @@ export class UserLoginUsecase
 		const userCredential = await this.userCredentialRepository.findById(
 			user.id
 		);
+		console.log('User credential fetched from database:', userCredential);
 		if (!userCredential) {
 			Result.createErrorWithMessage(
 				new BadRequestException("Incorrect username or password"),
