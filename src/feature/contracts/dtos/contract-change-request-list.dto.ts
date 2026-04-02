@@ -6,4 +6,6 @@ export class ContractChangeRequestListItemDto {
     requestedBy: string;
     requestedAt: string;
     remarks?: string;
+    oldValue?: any;
+    newValue?: any;
 }

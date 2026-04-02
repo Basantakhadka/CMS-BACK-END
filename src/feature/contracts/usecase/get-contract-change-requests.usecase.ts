@@ -45,6 +45,8 @@ export class GetContractChangeRequestListUsecase
                 )
                 : "";
             dto.remarks = changeRequest.remarks;
+            dto.oldValue = changeRequest.old_data;
+            dto.newValue = changeRequest.new_data;
             list.push(dto);
         });
 
