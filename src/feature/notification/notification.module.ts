@@ -17,7 +17,6 @@ import { ConfigService } from "@nestjs/config";
 @Module({
 	imports: [
 		EmailHandlerModule,
-		SettingsNotificationDbRepository
 	],
 	providers: [
 		EmailService,
