@@ -17,6 +17,8 @@ import { UserCredentialRepository } from "../repositories/user-credential.reposi
 import { UserCredential } from "../entities/user-credential.entity";
 import { IdGenerator } from "@app/shared/id-generator";
 import { UserPoolService } from "@app/core/cache/user-pool.service";
+import { AuditLogService } from "@app/feature/audit-log/audit-log.service";
+import { AuditAction } from "@app/feature/audit-log/entities/audit-log.entity";
 
 export class UpdateUserUsecase implements Usecase<UpdateUserUsecaseRequest, UpdateUserUsecaseResponse> {
     constructor (
@@ -25,6 +27,7 @@ export class UpdateUserUsecase implements Usecase<UpdateUserUsecaseRequest, Upda
         @Inject(UserCredentialDbRepository)
         private userCredentialRepository?: UserCredentialRepository,
         @Inject(UserPoolService) private userPoolService?: UserPoolService,
+        private readonly auditLogService?: AuditLogService,
     ) { }
     async execute(request: UpdateUserUsecaseRequest, requestContext?: RequestContext): Promise<Result<UpdateUserUsecaseResponse>> {
         const currentUser = requestContext?.getCurrentUser();
@@ -79,6 +82,16 @@ export class UpdateUserUsecase implements Usecase<UpdateUserUsecaseRequest, Upda
             await this.handleUserSignoutAfterDelete(request, requestContext);
         }
 
+
+        await this.auditLogService?.log({
+            action: AuditAction.UPDATE,
+            resourceType: "User",
+            resourceId: user.id,
+            resourceLabel: user.userName,
+            previousValue: { userId: savedUser.userId, userName: savedUser.userName, roles: savedUser.roles },
+            newValue: { userId: user.userId, userName: user.userName, roles: user.roles },
+            success: true,
+        });
 
         const response = new UpdateUserUsecaseResponse(user.id);
         return Result.createSuccessWithMessage(response, "Update operation requested.");

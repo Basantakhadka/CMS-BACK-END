@@ -13,6 +13,8 @@ import { IdGenerator } from "@app/shared/id-generator";
 import { UserPoolService } from "@app/core/cache/user-pool.service";
 import { UserCredentialRepository } from "../repositories/user-credential.repository";
 import { UserCredentialDbRepository } from "../repositories/db/user-credential.repository";
+import { AuditLogService } from "@app/feature/audit-log/audit-log.service";
+import { AuditAction } from "@app/feature/audit-log/entities/audit-log.entity";
 
 
 
@@ -22,8 +24,7 @@ export class DeleteUserUsecase implements Usecase<DeleteUserUsecaseRequest, Dele
         @Inject(UserPoolService) private userPoolService?: UserPoolService,
         @Inject(UserCredentialDbRepository)
         private userCredentialRepository?: UserCredentialRepository,
-
-
+        private readonly auditLogService?: AuditLogService,
     ) { }
     async execute(request: DeleteUserUsecaseRequest, requestContext?: RequestContext): Promise<Result<DeleteUserUsecaseResponse>> {
         const loggedInUser = requestContext.getCurrentUser().loginId;
@@ -40,7 +41,15 @@ export class DeleteUserUsecase implements Usecase<DeleteUserUsecaseRequest, Dele
                 await this.userRepository.deleteUsersByRole(item.value, savedUser.id)
         );
         await this.handleUserSignoutAfterDelete(user, requestContext);
-        //saving requestor task 
+
+        await this.auditLogService?.log({
+            action: AuditAction.DELETE,
+            resourceType: "User",
+            resourceId: user.id,
+            resourceLabel: user.userName,
+            previousValue: { userId: user.userId, userName: user.userName },
+            success: true,
+        });
 
         const response = new DeleteUserUsecaseResponse(user.id);
         return Result.createSuccessWithMessage(response, "User deletion completed");

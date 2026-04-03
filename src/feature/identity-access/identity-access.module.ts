@@ -29,10 +29,11 @@ import { ClientsController } from "./clients.controller";
 import { AddClientUsecase } from "./usecase/add-client.usecase";
 import { ClientDbRepository } from "./repositories/db/client.repository";
 import { GetClientsUsecase } from "./usecase/get-clients.usecase";
+import { AuditLogModule } from "@app/feature/audit-log/audit-log.module";
 
 
 @Module({
-	imports: [EmailHandlerModule],
+	imports: [EmailHandlerModule, AuditLogModule],
 	controllers: [UsersController, GeneralPolicyController, RolesController, ClientsController],
 	providers: [
 

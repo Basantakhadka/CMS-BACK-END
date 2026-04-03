@@ -7,6 +7,7 @@ import { Role } from "@app/feature/identity-access/entities/roles.entity";
 import { UserCredential } from "@app/feature/identity-access/entities/user-credential.entity";
 import { User, UserByRole } from "@app/feature/identity-access/entities/user.entity";
 import { SettingsNotificationsByType } from "@app/feature/notification/entities/setting-notification.entity";
+import { AuditLog } from "@app/feature/audit-log/entities/audit-log.entity";
 
 export const entities = [
     Client,
@@ -19,5 +20,5 @@ export const entities = [
     ContractChangeRequest,
     ContractAlert,
     SettingsNotificationsByType,
-    
+    AuditLog,
 ];

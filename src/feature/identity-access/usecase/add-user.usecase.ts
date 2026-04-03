@@ -21,6 +21,8 @@ import { UserCredential } from "../entities/user-credential.entity";
 import { hashPassword } from "@app/core/hashing/hashing";
 import { UserCredentialRepository } from "../repositories/user-credential.repository";
 import { EmailService } from "@app/feature/notification/notification.service";
+import { AuditLogService } from "@app/feature/audit-log/audit-log.service";
+import { AuditAction } from "@app/feature/audit-log/entities/audit-log.entity";
 
 export class AddUserUsecase
 	implements Usecase<AddUserUsecaseRequest, AddUserUsecaseResponse> {
@@ -35,7 +37,8 @@ export class AddUserUsecase
 
 		@Inject(RolesDbRepository)
 		private readonly rolesRepository: RolesRepository,
-		@Inject(EmailService) private emailService?: EmailService
+		@Inject(EmailService) private emailService?: EmailService,
+		@Inject(AuditLogService) private readonly auditLogService?: AuditLogService,
 	) { }
 
 	async execute(
@@ -105,7 +108,17 @@ export class AddUserUsecase
 			await this.userRepository.insertUserByRole(userByRole);
 		});
 
-		// 5️⃣ Response
+		// 5️⃣ Audit log
+		await this.auditLogService?.log({
+			action: AuditAction.CREATE,
+			resourceType: "User",
+			resourceId: users.id,
+			resourceLabel: users.userName,
+			newValue: { userId: users.userId, userName: users.userName, employeeId: users.employeeId },
+			success: true,
+		});
+
+		// 6️⃣ Response
 		return Result.createSuccessWithMessage(
 			new AddUserUsecaseResponse(),
 			"User created successfully",
