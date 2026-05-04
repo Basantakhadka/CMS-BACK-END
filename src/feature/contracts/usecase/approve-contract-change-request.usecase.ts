@@ -35,6 +35,7 @@ export class ApproveContractChangeRequestUsecase
         }
 
         const changeRequest = await this.changeRequestRepository.findById(request.id);
+        console.log("Fetched Change Request:", changeRequest);
 
         if (!changeRequest || changeRequest.client_code !== clientCode) {
             throw new NotFoundException("Change request not found");

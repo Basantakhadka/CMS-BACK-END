@@ -21,7 +21,7 @@ export class RejectContractChangeRequestUsecase
         requestContext?: RequestContext,
     ): Promise<Result<RejectContractChangeRequestUsecaseResponse>> {
         const clientCode = requestContext?.getCurrentUser()?.clientCode;
-        const approver = requestContext?.getCurrentUser()?.loginId ?? "SYSTEM";
+        const approver = requestContext?.getCurrentUser()?.userId ?? "SYSTEM";
 
         if (!clientCode) {
             throw new ForbiddenException("Missing client context");

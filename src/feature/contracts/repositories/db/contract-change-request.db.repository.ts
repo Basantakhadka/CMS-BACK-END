@@ -66,6 +66,15 @@ export class ContractChangeRequestDbRepository implements ContractChangeRequestR
         }
         return await this.repository.findOneBy(criteria);
     }
+    async findByContractId(contractId: string): Promise<ContractChangeRequest[]> {
+        await this.setRepository();
+        const clientCode = this.getClientCode(false);
+        const criteria: Record<string, any> = { contract_id: contractId };
+        if (clientCode) {
+            criteria.client_code = clientCode;
+        }
+        return await this.repository.findBy(criteria);
+    }
 
     async findAllAndResponseWithPagination(
         filters: FilterConditionsDto,
