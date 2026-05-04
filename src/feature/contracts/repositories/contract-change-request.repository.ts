@@ -7,6 +7,7 @@ export interface ContractChangeRequestRepository {
     update(entity: Partial<ContractChangeRequest>): Promise<ContractChangeRequest>;
     delete(entity: ContractChangeRequest): Promise<void>;
     findById(id: string): Promise<ContractChangeRequest>;
+    findByContractId(contractId: string): Promise<ContractChangeRequest[]>;
     findAllAndResponseWithPagination(
         filters: FilterConditionsDto,
         pageableInfo: any,

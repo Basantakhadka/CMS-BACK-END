@@ -34,6 +34,13 @@ export class UpdateContractUsecase
       throw new ForbiddenException('Missing client context');
     }
 
+    //check if contract exists in change request
+
+     const isChangeRequestExists = await this.changeRequestRepository.findByContractId(request.id);
+        console.log("Fetched Change Request:", isChangeRequestExists);
+    if (isChangeRequestExists && isChangeRequestExists.length > 0) {
+      throw new ForbiddenException('A change request for this contract already exists.');
+    }
     // 1️⃣ Find existing contract by ID
     const existingContract = await this.contractRepository.findById(request.id);
 
@@ -49,7 +56,7 @@ export class UpdateContractUsecase
     changeRequest.contract_id = existingContract.id;
     changeRequest.change_type = ContractChangeRequestType.UPDATE;
     changeRequest.status = ContractChangeRequestStatus.PENDING;
-    changeRequest.requested_by = requestContext?.getCurrentUser()?.loginId || "SYSTEM";
+    changeRequest.requested_by = requestContext?.getCurrentUser()?.userId || "SYSTEM";
     changeRequest.requested_at = new Date();
     changeRequest.old_data = oldData ?? undefined;
     changeRequest.new_data = snapshot;

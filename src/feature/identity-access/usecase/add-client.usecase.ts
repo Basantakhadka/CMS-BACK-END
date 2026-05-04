@@ -235,6 +235,7 @@ export class AddClientUsecase
 
     private getDefaultPermissions(): string[] {
         return [
+            "dashboard",
             "dashboard:contracts",
             "dashboard:alerts",
             "contracts:search",

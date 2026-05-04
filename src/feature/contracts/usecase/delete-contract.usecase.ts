@@ -33,6 +33,12 @@ export class DeleteContractUsecase
     if (!clientCode) {
       throw new ForbiddenException('Missing client context');
     }
+     //check if contract exists in change request
+
+     const isChangeRequestExists = await this.changeRequestRepository.findByContractId(request.id);
+    if (isChangeRequestExists && isChangeRequestExists.length > 0) {
+      throw new ForbiddenException('A change request for this contract already exists.');
+    }
 
     // 1️⃣ Find the contract
     const contract = await this.contractRepository.findById(request.id);
@@ -47,7 +53,7 @@ export class DeleteContractUsecase
     changeRequest.contract_id = contract.id;
     changeRequest.change_type = ContractChangeRequestType.DELETE;
     changeRequest.status = ContractChangeRequestStatus.PENDING;
-    changeRequest.requested_by = requestContext?.getCurrentUser()?.loginId || "SYSTEM";
+    changeRequest.requested_by = requestContext?.getCurrentUser()?.userId || "SYSTEM";
     changeRequest.requested_at = new Date();
     changeRequest.old_data = oldData ?? undefined;
     changeRequest.new_data = { ...snapshot, deleted: true };
