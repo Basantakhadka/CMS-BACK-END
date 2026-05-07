@@ -3,13 +3,32 @@ import { Result } from "@app/feature/common/result";
 import { Injectable } from "@nestjs/common";
 import { GetPermissionUsecaseRequest } from "./request/get-permission.usecase.request";
 import { GetPermissionUsecaseResponse } from "./response/get-permission.usecase.response";
+import { RequestContext } from "@app/core/middleware/request_context";
+
 @Injectable()
 export class GetPermissonUsecase
 	implements Usecase<GetPermissionUsecaseRequest, GetPermissionUsecaseResponse> {
 	async execute(
-		request?: GetPermissionUsecaseRequest
+		request?: GetPermissionUsecaseRequest,
+		requestContext?: RequestContext,
 	): Promise<Result<GetPermissionUsecaseResponse>> {
-		const response = permissionTree;
+		let response = permissionTree;
+
+    console.log(requestContext?.getCurrentUser()?.clientCode, "requestContext?.getCurrentUser() in get permission usecase");
+
+		// If clientCode is '000', filter out contracts and alerts
+		if (requestContext?.getCurrentUser()?.clientCode === '000') {
+			response = response
+				.map((permission) => {
+					return permission;
+				})
+				// Filter out the entire contracts and alerts sections
+				.filter(
+					(permission) =>
+						permission.key !== 'contracts' && permission.key !== 'alerts',
+				);
+		}
+
 		return Result.createSuccess(response);
 	}
 }
