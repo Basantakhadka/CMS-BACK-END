@@ -96,7 +96,7 @@ export class RolesController {
 	@Get("roles-permissionsui")
 	async getPermissions() {
 		try {
-			return await this.getPermissionUsecase.execute();
+			return await this.getPermissionUsecase.execute('',this.als.getStore());
 		} catch (error) {
 			throw error;
 		}
