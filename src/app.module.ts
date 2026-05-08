@@ -23,6 +23,7 @@ import { alerts } from "./feature/alerts/alerts.module";
 import { ScheduleModule } from '@nestjs/schedule';
 import { NotificationModule } from "./feature/notification/notification.module";
 import { AuditLogModule } from "./feature/audit-log/audit-log.module";
+import { ClientModule } from "./feature/client/client.module";
 
 @Module({
 	imports: [
@@ -35,6 +36,7 @@ import { AuditLogModule } from "./feature/audit-log/audit-log.module";
 		IdentityAndAccessModule,
 		contracts,
 		alerts,
+		ClientModule,
 		CustomCacheModule,
 		NotificationModule,
 		AuditLogModule,

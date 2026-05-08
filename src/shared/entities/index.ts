@@ -21,4 +21,5 @@ export const entities = [
     ContractAlert,
     SettingsNotificationsByType,
     AuditLog,
+    
 ];
