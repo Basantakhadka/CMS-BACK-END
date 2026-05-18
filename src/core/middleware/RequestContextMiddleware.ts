@@ -139,7 +139,7 @@ export class RequestContextMiddleware implements NestMiddleware {
             return undefined;
         }
         const normalized = rawValue.trim();
-       if (!/^[a-zA-Z0-9]{3}$/.test(normalized)) {
+       if (!/^[a-zA-Z0-9]{3,4}$/.test(normalized)) {
     throw new BadRequestException('Client code must be 3 characters (letters or numbers)');
 }
         return normalized;
