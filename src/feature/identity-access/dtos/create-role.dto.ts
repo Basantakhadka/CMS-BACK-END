@@ -1,4 +1,4 @@
-import { ArrayNotEmpty, IsArray, IsBoolean, IsNotEmpty, IsString, MaxLength, MinLength, ValidateIf } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength, ValidateIf } from "class-validator";
 
 export class RoleDto {
     @IsString()
@@ -16,6 +16,9 @@ export class RoleDto {
     @IsString({ each: true })
     @MinLength(1, { each: true })
     permissions: Array<string>
+
+    @IsOptional()
+    contractIds?: Array<string>;
 }
 
 export class CreateRoleDto extends RoleDto {

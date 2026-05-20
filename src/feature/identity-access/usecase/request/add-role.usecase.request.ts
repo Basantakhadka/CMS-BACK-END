@@ -4,6 +4,7 @@ export class AddRoleUsecaseRequest implements UsecaseRequest {
     constructor (
         public title: string,
         public active: boolean,
-        public permission: Array<string>
+        public permission: Array<string>,
+        public contractIds?: Array<string>
     ) { }
 }

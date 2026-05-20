@@ -54,6 +54,7 @@ export class AddRoleUsecase implements Usecase<AddRoleUsecaseRequest, AddRoleUse
         role.permissions = request.permission;
         role.active = request.active;
         role.createdOn = DateUtils.convertToString(DateUtils.getCurrentFullDate());
+        role.contract = request.contractIds || [];
 
         // 🔹 Save role
         await this.rolesRepository.insert(role);
