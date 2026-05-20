@@ -36,6 +36,7 @@ export class UpdateRoleUsecase implements Usecase<UpdateRoleUsecaseRequest, Upda
         role.active = request.active;
         role.permissions = request.permissions;
         role.title = request.title;
+        role.contract = request?.contractIds || [];
         await this.rolesRepository.save(role);
 
         const response = new UpdateRoleUsecaseResponse(user.id);

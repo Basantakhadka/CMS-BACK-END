@@ -5,6 +5,7 @@ export class UpdateRoleUsecaseRequest implements UsecaseRequest{
         public id:string,
         public title:string,
         public active: boolean,
-        public permissions: Array<string>
+        public permissions: Array<string>,
+        public contractIds?: Array<string>
     ){}
 }

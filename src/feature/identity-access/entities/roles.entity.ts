@@ -38,6 +38,9 @@ export class Role implements DbEntity {
 	@JsonbColumn()
 	permissions: string[];
 
+    @JsonbColumn()
+    contract: string[];
+
 	@BooleanColumn()
 	deleted: boolean;
 
@@ -60,6 +63,7 @@ export class Role implements DbEntity {
 			role.permissions = item.permissions;
 			role.lastModifiedBy = item.last_modified_by;
 			role.createdBy = item.created_by;
+			role.contract = item.contract;
 			newData.push(role);
 		});
 		return newData;
@@ -72,6 +76,12 @@ export class Role implements DbEntity {
 		map.set("deleted", "deleted");
 		map.set("active", "active");
 		map.set("clientCode", "client_code");
+		map.set("createdOn", "created_on");
+		map.set("createdBy", "created_by");
+		map.set("lastModifiedOn", "last_modified_on");
+		map.set("lastModifiedBy", "last_modified_by");
+		map.set("title", "title");
+		map.set("contract", "contract");
 		return map;
 	}
 

@@ -9,7 +9,8 @@ export interface ContractRepository extends BaseRepository<Contract, string> {
     findByContractId(userId: string): Promise<Contract>;
     findAllAndResponseWithPagination(
         filters: FilterConditionsDto,
-        pageableInfo: any
+        pageableInfo: any,
+        contractIds?: string[]
     ): Promise<Page<Contract>>;
     findByEmployeeId(employeeId: string): Promise<Contract>;
     findUsersInIds(roles: string[]): Promise<Contract[]>;

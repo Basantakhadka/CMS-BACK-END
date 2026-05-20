@@ -36,20 +36,21 @@ export class RolesController {
 		private readonly rolesTotalCountUsecase: RolesTotalCountUsecase,
 		private readonly als: AsyncLocalStorage<RequestContext>
 	) { }
-	@Post("roles")
-	async addRoles(@Body() body: CreateRoleDto) {
-		try {
-			const role: CreateRoleDto = body;
-			const request = new AddRoleUsecaseRequest(
-				role.title,
-				role.active,
-				role.permissions
-			);
-			return await this.addRoleUsecase.execute(request, this.als.getStore());
-		} catch (error) {
-			throw error;
-		}
-	}
+	   @Post("roles")
+	   async addRoles(@Body() body: CreateRoleDto) {
+		   try {
+			   const role: CreateRoleDto = body;
+			   const request = new AddRoleUsecaseRequest(
+				   role.title,
+				   role.active,
+				   role.permissions,
+				   role.contractIds
+			   );
+			   return await this.addRoleUsecase.execute(request, this.als.getStore());
+		   } catch (error) {
+			   throw error;
+		   }
+	   }
 	@Post("roles/list")
 	async getRolesList(@Body() body: FilterConditionsDto) {
 		try {
@@ -69,21 +70,22 @@ export class RolesController {
 			throw error;
 		}
 	}
-	@Put("roles/:id")
-	async updateRole(@Param("id") id: string, @Body() body: UpdateRoleDto) {
-		try {
-			const role: UpdateRoleDto = body;
-			const request = new UpdateRoleUsecaseRequest(
-				id,
-				role.title,
-				role.active,
-				role.permissions
-			);
-			return await this.updateRoleUsecase.execute(request, this.als.getStore());
-		} catch (error) {
-			throw error;
-		}
-	}
+	   @Put("roles/:id")
+	   async updateRole(@Param("id") id: string, @Body() body: UpdateRoleDto) {
+		   try {
+			   const role: UpdateRoleDto = body;
+			   const request = new UpdateRoleUsecaseRequest(
+				   id,
+				   role.title,
+				   role.active,
+				   role.permissions,
+				   role.contractIds
+			   );
+			   return await this.updateRoleUsecase.execute(request, this.als.getStore());
+		   } catch (error) {
+			   throw error;
+		   }
+	   }
 	@Get("roles/:id")
 	async viewRole(@Param("id") id: string) {
 		try {

@@ -129,7 +129,8 @@ export class ContractDbRepository implements ContractRepository {
     }
     async findAllAndResponseWithPagination(
         filters: FilterConditionsDto,
-        pageableInfo: any
+        pageableInfo: any,
+        contractIds?: string[]
     ): Promise<Page<Contract>> {
         await this.setRepository();
         const clientCode = this.getClientCode();
@@ -137,6 +138,11 @@ export class ContractDbRepository implements ContractRepository {
             .createQueryBuilder()
             .where("deleted = false")
             .andWhere("client_code = :clientCode", { clientCode });
+
+        if (contractIds && contractIds.length > 0) {
+            queryBuilder.andWhere("id IN (:...contractIds)", { contractIds });
+        }
+
         const options: PaginationOptions = {
             columnsMap: null,
             defaultSortMeta: new SortMeta("createdAt,id", SortOrder.DESC),

@@ -11,13 +11,21 @@ import { DateUtils } from "@app/shared/utils/date-utils";
 import { GetContractListUsecaseRequest } from "./request/get-contractList.usecase.request";
 import { GetContractListUsecaseResponse } from "./response/get-contractList.usecase.response";
 import { GetContractListResponseDto } from "../dtos/contractList.dtos";
+import { UserDbRepository } from "@app/feature/identity-access/repositories/db/user.repository";
+import { UserRepository } from "@app/feature/identity-access/repositories/user.repository";
+import { RolesDbRepository } from "@app/feature/identity-access/repositories/db/roles.repository";
+import { RolesRepository } from "@app/feature/identity-access/repositories/roles.repository";
 
 export class GetContractsListUsecase
   implements Usecase<GetContractListUsecaseRequest, GetContractListUsecaseResponse>
 {
   constructor(
     @Inject(ContractDbRepository)
-    private readonly contractRepository: ContractRepository
+    private readonly contractRepository: ContractRepository,
+    @Inject(UserDbRepository)
+    private readonly userRepository: UserRepository,
+    @Inject(RolesDbRepository)
+    private readonly rolesRepository: RolesRepository,
   ) {}
 
   async execute(
@@ -25,10 +33,36 @@ export class GetContractsListUsecase
     requestContext?: RequestContext
   ): Promise<Result<GetContractListUsecaseResponse>> {
 
-    // 1️⃣ Get paginated contracts
+    // 1️⃣ Resolve contract IDs allowed for the logged-in user's role(s)
+    let allowedContractIds: string[] | undefined;
+
+    if (requestContext) {
+      const loginId = requestContext.getCurrentUser().loginId;
+      const user = await this.userRepository.findById(loginId);
+
+      if (user && user.roles && user.roles.length > 0) {
+        const roleIds: string[] = user.roles.map((r: any) => r.value ?? r.id ?? r);
+
+        const contractIdSet = new Set<string>();
+        for (const roleId of roleIds) {
+          const role = await this.rolesRepository.findById(roleId);
+          if (role?.contract && role.contract.length > 0) {
+            role.contract.forEach((id) => contractIdSet.add(id));
+          }
+        }
+
+        // Only restrict when at least one role has contract IDs
+        if (contractIdSet.size > 0) {
+          allowedContractIds = Array.from(contractIdSet);
+        }
+      }
+    }
+
+    // 2️⃣ Get paginated contracts (filtered by IDs when applicable)
     const contractsList = await this.contractRepository.findAllAndResponseWithPagination(
       request.data,
-      request.data.pageInfo
+      request.data.pageInfo,
+      allowedContractIds
     );
 
     if (!contractsList || contractsList.getElements().length === 0) {
